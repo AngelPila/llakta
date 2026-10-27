@@ -68,7 +68,7 @@ export function Score({ n, accent, w = 0 }: { n: number; accent?: boolean; w?: n
   return (
     <span className="score" aria-label={`${v} de 5`} style={{ ["--w" as string]: w }}>
       <span className="track">
-        <span className="fill" style={{ width: `${(v / 5) * 100}%`, background: accent ? "var(--accent)" : "#8cc4bb" }} />
+        <span className="fill" style={{ width: `${(v / 5) * 100}%`, background: accent ? "var(--accent)" : "var(--score-off, #8cc4bb)" }} />
       </span>
       <span className="num">{v}</span>
     </span>
@@ -99,220 +99,202 @@ export default function AgentsRoom({ p, webSearch, onOpen }: { p: Project; webSe
     await fetch(`/api/projects/${p.id}/retry`, { method: "POST" });
   }
 
+  const actualFase = eligiendo ? FASES.findIndex((f) => f.agentes.includes("critico")) : undefined;
+
   return (
-    <div className="col">
-      <div className="head-row">
-        <div>
-          <h1 className="greeting">{p.tituloCorto || "Tu problema"}</h1>
-          <p className="lede">
+    <section className="rotulo sala" aria-labelledby="sala-h">
+      <div className="rotulo-in">
+        <div className="rotulo-main">
+          <h1 id="sala-h" className="rotulo-title sm">{p.tituloCorto || "Tu problema"}</h1>
+          <p className="sala-estado">
             <b className="num pop" key={listos}>
               {listos} de {p.agentes.length}
             </b>{" "}
             agentes listos · <span className="num">{duracion(total)}</span> · {p.proveedor}
             {webSearch ? " con búsqueda web" : ""}
           </p>
-        </div>
-        <div className="actions">
-          {p.status === "listo" && (
-            <button className="btn primary ready" onClick={onOpen}>
-              Abrir el tablero <Icon name="arrow" />
-            </button>
-          )}
-          {eligiendo && (
-            <a className="btn primary ready" href="#salidas">
-              Elige la salida <Icon name="arrow" />
-            </a>
-          )}
-          {p.status === "error" && (
-            <button className="btn primary" onClick={retry}>
-              Reintentar
-            </button>
-          )}
-        </div>
-      </div>
-      {p.status === "error" && (
-        <p className="error-line" style={{ marginTop: 16 }}>
-          Se detuvo: {p.error}
-        </p>
-      )}
-
-      <div className="grid after-head" style={{ alignItems: "start" }}>
-        <div className="s5 room-side">
-          <section className="panel" aria-labelledby="ag-h">
-            <div className="panel-head">
-              <h2 id="ag-h">El equipo</h2>
-            </div>
-            <Fases agentes={p.agentes} actual={eligiendo ? FASES.findIndex((f) => f.agentes.includes("critico")) : undefined}>
-              {(a) => (
-                  <li key={a.key} className={`rowcard agent ${a.estado}`}>
-                    <AgentGlyph estado={a.estado} />
-                    <div className="main">
-                      <div className="t">{a.nombre}</div>
-                      <div className="sub" key={a.notas.length}>
-                        <span className="note">{a.notas[a.notas.length - 1] ?? a.rol}</span>
-                      </div>
-                    </div>
-                    {a.estado === "trabajando" && <span className="sweep" aria-hidden="true" />}
-                  </li>
-              )}
-            </Fases>
-          </section>
-        </div>
-
-        <section className="s7 out" aria-labelledby="out-h">
-          <h2 id="out-h" className="sr">
-            Lo que va saliendo
-          </h2>
-          {!p.ficha && (
-            <div className="panel">
-              <div className="panel-head">
-                <h2>Lo que va saliendo</h2>
-              </div>
-              <p className="empty">Los resultados aparecen aquí a medida que cada agente termina.</p>
-            </div>
-          )}
-
-          {p.ficha && (
-            <article className="panel rise">
-              <div className="panel-head">
-                <h2>Ficha del problema</h2>
-              </div>
-              <p className="statement">{p.ficha.enunciado}</p>
-            </article>
-          )}
-
-          {p.investigacion && (
-            <article className="panel rise">
-              <div className="panel-head">
-                <h2>Por qué pasa</h2>
-              </div>
-              <ol className="rows">
-                {p.investigacion.causas.map((c, i) => (
-                  <li key={i} className="rowcard rise" style={{ ["--i" as string]: i, minHeight: 0 }}>
-                    <div className="main">
-                      <div className="t" style={{ whiteSpace: "normal" }}>{c.causa}</div>
-                    </div>
-                  </li>
-                ))}
-              </ol>
-            </article>
-          )}
-
-          {p.soluciones && (
-            <article className="panel rise" id="salidas">
-              <div className="panel-head">
-                <h2>Seis salidas</h2>
-                {eligiendo && <span className="chip">Elige una</span>}
-              </div>
-              <table className={`ideas${p.critica && !eligiendo ? " decided" : ""}${eligiendo ? " choosing" : ""}`} key={p.critica ? (eligiendo ? "eligiendo" : "decidida") : "abierta"}>
-                <thead>
-                  <tr>
-                    <th>Solución</th>
-                    <th className="num">Costo</th>
-                    {p.critica && (
-                      <>
-                        <th className="num">Impacto</th>
-                        <th className="num">Barata</th>
-                        <th className="num">Factible</th>
-                      </>
-                    )}
-                  </tr>
-                </thead>
-                <tbody>
-                  {p.soluciones.map((s, i) => {
-                    const ev = p.critica?.evaluaciones.find((e) => e.id === s.id);
-                    const win = s.id === elegida;
-                    const recomendada = s.id === p.critica?.elegida_id;
-                    return (
-                      <tr key={s.id} className={`rise${win ? " win" : ""}`} style={{ ["--i" as string]: i }} onClick={eligiendo ? () => setSel(s.id) : undefined}>
-                        <td>
-                          <label className="t">
-                            {eligiendo && <input type="radio" name="salida" checked={win} onChange={() => setSel(s.id)} />}
-                            <span>{s.nombre}</span> {eligiendo ? recomendada && <span className="pill acc">Recomendada</span> : win && <span className="pill acc">Elegida</span>}
-                          </label>
-                        </td>
-                        <td className="num">
-                          <span>${s.costo_usd.toLocaleString("es")}</span>
-                        </td>
-                        {ev && (
-                          <>
-                            <td className="num">
-                              <Score n={ev.impacto} accent={win} w={i} />
-                            </td>
-                            <td className="num">
-                              <Score n={ev.costo} accent={win} w={i + 1} />
-                            </td>
-                            <td className="num">
-                              <Score n={ev.factibilidad} accent={win} w={i + 2} />
-                            </td>
-                          </>
-                        )}
-                      </tr>
-                    );
-                  })}
-                </tbody>
-              </table>
-              {eligiendo && (
-                <button className="btn primary" style={{ marginTop: 16 }} disabled={!sel || enviando} onClick={elegir}>
-                  {enviando ? "Enviando…" : "Seguir con esta"} <Icon name="arrow" />
+          {(p.status === "listo" || eligiendo || p.status === "error") && (
+            <div className="sala-actions">
+              {p.status === "listo" && (
+                <button className="btn primary ready" onClick={onOpen}>
+                  Abrir el tablero <Icon name="arrow" />
                 </button>
               )}
-            </article>
+              {eligiendo && (
+                <a className="btn primary ready" href="#salidas">
+                  Elige la salida <Icon name="arrow" />
+                </a>
+              )}
+              {p.status === "error" && (
+                <>
+                  <p className="sala-error">Se detuvo: {p.error}</p>
+                  <button className="btn primary" onClick={retry}>
+                    Reintentar
+                  </button>
+                </>
+              )}
+            </div>
           )}
 
-          {p.plan && (
-            <article className="panel rise">
-              <div className="panel-head">
-                <h2>El plan</h2>
+          <div className="sala-out" aria-labelledby="out-h">
+            <h2 id="out-h" className="sr">
+              Lo que va saliendo
+            </h2>
+            {!p.ficha && (
+              <div className="hoja">
+                <h2 className="hoja-title">Lo que va saliendo</h2>
+                <p className="hoja-empty">Los resultados aparecen aquí a medida que cada agente termina.</p>
               </div>
-              <p className="statement">{p.plan.objetivo}</p>
-              <div className="strip" style={{ gridTemplateColumns: "repeat(3, 1fr)" }}>
-                <div>
-                  <span>Duración</span>
-                  <b className="num">{p.plan.semanas} semanas</b>
-                </div>
-                <div>
-                  <span>Tareas</span>
-                  <b className="num">{p.plan.tareas.length}</b>
-                </div>
-                <div>
-                  <span>Presupuesto</span>
-                  <b className="num">${p.plan.presupuesto.reduce((s, x) => s + x.usd, 0).toLocaleString("es")}</b>
-                </div>
-              </div>
-            </article>
-          )}
+            )}
 
-          {(p.docs.length > 0 || p.campana) && (
-            <article className="panel rise">
-              <div className="panel-head">
-                <h2>Listo para arrancar</h2>
-              </div>
-              <ul className="rows">
-                {p.docs.map((d) => (
-                  <li key={d.id} className="rowcard">
-                    <Icon name="doc" />
-                    <div className="main">
-                      <div className="t">{{ oficio: "Oficio a la autoridad", convocatoria: "Mensaje para vecinos", otro: d.titulo }[d.tipo]}</div>
-                    </div>
-                  </li>
-                ))}
-                {p.campana && (
-                  <li className="rowcard">
-                    <Icon name="globe" />
-                    <div className="main">
-                      <div className="t">Página de firmas</div>
-                    </div>
-                    <a className="link end" href={`/c/${p.publicoId}`} target="_blank" rel="noreferrer">
-                      Abrir
-                    </a>
-                  </li>
+            {p.ficha && (
+              <article className="hoja rise">
+                <h2 className="hoja-title">Ficha del problema</h2>
+                <p className="statement">{p.ficha.enunciado}</p>
+              </article>
+            )}
+
+            {p.investigacion && (
+              <article className="hoja rise">
+                <h2 className="hoja-title">Por qué pasa</h2>
+                <ol className="causas">
+                  {p.investigacion.causas.map((c, i) => (
+                    <li key={i} className="rise" style={{ ["--i" as string]: i }}>
+                      <span className="q-n num" aria-hidden="true">{i + 1}</span>
+                      {c.causa}
+                    </li>
+                  ))}
+                </ol>
+              </article>
+            )}
+
+            {p.soluciones && (
+              <article className="hoja rise" id="salidas">
+                <h2 className="hoja-title">
+                  Seis salidas {eligiendo && <span className="hoja-chip">Elige una</span>}
+                </h2>
+                <table className={`ideas${p.critica && !eligiendo ? " decided" : ""}${eligiendo ? " choosing" : ""}`} key={p.critica ? (eligiendo ? "eligiendo" : "decidida") : "abierta"}>
+                  <thead>
+                    <tr>
+                      <th>Solución</th>
+                      <th className="num">Costo</th>
+                      {p.critica && (
+                        <>
+                          <th className="num">Impacto</th>
+                          <th className="num">Barata</th>
+                          <th className="num">Factible</th>
+                        </>
+                      )}
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {p.soluciones.map((s, i) => {
+                      const ev = p.critica?.evaluaciones.find((e) => e.id === s.id);
+                      const win = s.id === elegida;
+                      const recomendada = s.id === p.critica?.elegida_id;
+                      return (
+                        <tr key={s.id} className={`rise${win ? " win" : ""}`} style={{ ["--i" as string]: i }} onClick={eligiendo ? () => setSel(s.id) : undefined}>
+                          <td>
+                            <label className="t">
+                              {eligiendo && <input type="radio" name="salida" checked={win} onChange={() => setSel(s.id)} />}
+                              <span>{s.nombre}</span> {eligiendo ? recomendada && <span className="pill acc">Recomendada</span> : win && <span className="pill acc">Elegida</span>}
+                            </label>
+                          </td>
+                          <td className="num">
+                            <span>${s.costo_usd.toLocaleString("es")}</span>
+                          </td>
+                          {ev && (
+                            <>
+                              <td className="num">
+                                <Score n={ev.impacto} accent={win} w={i} />
+                              </td>
+                              <td className="num">
+                                <Score n={ev.costo} accent={win} w={i + 1} />
+                              </td>
+                              <td className="num">
+                                <Score n={ev.factibilidad} accent={win} w={i + 2} />
+                              </td>
+                            </>
+                          )}
+                        </tr>
+                      );
+                    })}
+                  </tbody>
+                </table>
+                {eligiendo && (
+                  <div className="hoja-foot">
+                    <button className={`btn primary${enviando ? " busy" : ""}`} disabled={!sel || enviando} onClick={elegir}>
+                      {enviando ? "Enviando" : "Seguir con esta"} <Icon name="arrow" />
+                    </button>
+                  </div>
                 )}
-              </ul>
-            </article>
-          )}
-        </section>
+              </article>
+            )}
+
+            {p.plan && (
+              <article className="hoja rise">
+                <h2 className="hoja-title">El plan</h2>
+                <p className="statement">{p.plan.objetivo}</p>
+                <dl className="cifras">
+                  <div>
+                    <dt>Duración</dt>
+                    <dd className="num">{p.plan.semanas} semanas</dd>
+                  </div>
+                  <div>
+                    <dt>Tareas</dt>
+                    <dd className="num">{p.plan.tareas.length}</dd>
+                  </div>
+                  <div>
+                    <dt>Presupuesto</dt>
+                    <dd className="num">${p.plan.presupuesto.reduce((s, x) => s + x.usd, 0).toLocaleString("es")}</dd>
+                  </div>
+                </dl>
+              </article>
+            )}
+
+            {(p.docs.length > 0 || p.campana) && (
+              <article className="hoja rise">
+                <h2 className="hoja-title">Listo para arrancar</h2>
+                <ul className="listos">
+                  {p.docs.map((d) => (
+                    <li key={d.id}>
+                      <Icon name="doc" />
+                      <span>{{ oficio: "Oficio a la autoridad", convocatoria: "Mensaje para vecinos", otro: d.titulo }[d.tipo]}</span>
+                    </li>
+                  ))}
+                  {p.campana && (
+                    <li>
+                      <Icon name="globe" />
+                      <span>Página de firmas</span>
+                      <a href={`/c/${p.publicoId}`} target="_blank" rel="noreferrer">
+                        Abrir
+                      </a>
+                    </li>
+                  )}
+                </ul>
+              </article>
+            )}
+          </div>
+        </div>
+
+        <aside className="rotulo-side" aria-labelledby="ag-h">
+          <h2 id="ag-h">El equipo</h2>
+          <Fases agentes={p.agentes} actual={actualFase}>
+            {(a) => (
+              <li key={a.key} className={`rowcard agent ${a.estado}`}>
+                <AgentGlyph estado={a.estado} />
+                <div className="main">
+                  <div className="t">{a.nombre}</div>
+                  <div className="sub" key={a.notas.length}>
+                    <span className="note">{a.notas[a.notas.length - 1] ?? a.rol}</span>
+                  </div>
+                </div>
+                {a.estado === "trabajando" && <span className="sweep" aria-hidden="true" />}
+              </li>
+            )}
+          </Fases>
+        </aside>
       </div>
-    </div>
+    </section>
   );
 }

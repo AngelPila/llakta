@@ -10,6 +10,7 @@ import Documentos from "./Documentos";
 import Equipo from "./Equipo";
 import Interview from "./Interview";
 import Investigacion from "./Investigacion";
+import Barra from "./Barra";
 import Resumen from "./Resumen";
 import Tareas from "./Tareas";
 import { Avatar, Icon, Mark } from "./ui";
@@ -114,8 +115,7 @@ export default function ProjectApp({ initial, webSearch }: { initial: Project; w
   const publicar = (publico: boolean) => fetch(`/api/projects/${p.id}`, { method: "PATCH", headers: { "content-type": "application/json" }, body: JSON.stringify({ publico }) });
 
   let body: React.ReactNode;
-  if (p.status === "preguntando" || p.status === "entrevista") body = <Interview p={p} />;
-  else if (!listo || view === "agentes") body = <AgentsRoom p={p} webSearch={webSearch} onOpen={() => go("resumen")} />;
+  if (!listo || view === "agentes") body = <AgentsRoom p={p} webSearch={webSearch} onOpen={() => go("resumen")} />;
   else if (view === "tareas") body = <Tareas p={p} yo={yo} />;
   else if (view === "equipo") body = <Equipo p={p} />;
   else if (view === "documentos") body = <Documentos p={p} />;
@@ -124,6 +124,16 @@ export default function ProjectApp({ initial, webSearch }: { initial: Project; w
 
   const titulo = p.tituloCorto || "Proyecto nuevo";
   if (!mounted) return <div className="app" />;
+
+  // En la entrevista todavía no hay nada que navegar: va a pantalla completa, como el inicio.
+  // Mientras los agentes trabajan, la sala también va a pantalla completa: el tablero llega al terminar.
+  if (!listo)
+    return (
+      <div className="home">
+        <Barra />
+        {p.status === "preguntando" || p.status === "entrevista" ? <Interview p={p} /> : <AgentsRoom p={p} webSearch={webSearch} onOpen={() => go("resumen")} />}
+      </div>
+    );
 
   return (
     <div className="app">

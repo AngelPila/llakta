@@ -4,8 +4,8 @@ import type { Member } from "@/lib/types";
 export function Mark({ size = 20 }: { size?: number }) {
   return (
     <svg width={size} height={size} viewBox="0 0 20 20" aria-hidden="true">
-      <path d="M7 1h6v3h3v3h3v6h-3v3h-3v3H7v-3H4v-3H1V7h3V4h3z" fill="#1b6e66" />
-      <rect x="8" y="8" width="4" height="4" fill="#fff" />
+      <path d="M7 1h6v3h3v3h3v6h-3v3h-3v3H7v-3H4v-3H1V7h3V4h3z" style={{ fill: "var(--mark, #1b6e66)" }} />
+      <rect x="8" y="8" width="4" height="4" style={{ fill: "var(--mark-hole, #fff)" }} />
     </svg>
   );
 }

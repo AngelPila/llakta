@@ -22,45 +22,43 @@ export default function Interview({ p }: { p: Project }) {
   }
 
   return (
-    <div className="col">
-      <h1 className="greeting">{p.tituloCorto || "Leyendo tu problema"}</h1>
-      <p className="lede">«{p.problema}»</p>
-      <div className="grid after-head" style={{ alignItems: "start" }}>
-        <form className="panel s7" onSubmit={submit} aria-labelledby="preg-h">
-          <div className="panel-head">
-            <h2 id="preg-h">Tres preguntas antes de arrancar</h2>
-            <span className="end">La entrevista</span>
-          </div>
-          <div style={{ display: "flex", flexDirection: "column", gap: 20 }}>
+    <section className="rotulo" aria-labelledby="entrevista-h">
+      <div className="rotulo-in">
+        <div className="rotulo-main">
+          <h1 id="entrevista-h" className="rotulo-title sm">{p.tituloCorto || "Leyendo tu problema"}</h1>
+          <blockquote className="rotulo-quote">{p.problema}</blockquote>
+          <form className="hoja" onSubmit={submit} aria-labelledby="preg-h">
+            <h2 id="preg-h" className="hoja-title">Tres preguntas antes de arrancar</h2>
             {listo
               ? p.preguntas.map((q, i) => (
                   <div key={q.id} className="field rise" style={{ ["--i" as string]: i }}>
-                    <label htmlFor={q.id}>{q.pregunta}</label>
+                    <label htmlFor={q.id}>
+                      <span className="q-n num" aria-hidden="true">{i + 1}</span>
+                      {q.pregunta}
+                    </label>
                     <span className="hint">{q.porque}</span>
                     <input id={q.id} className="input" value={resp[q.id] ?? ""} onChange={(e) => setResp({ ...resp, [q.id]: e.target.value })} placeholder="Si no sabes, déjalo en blanco" />
                   </div>
                 ))
               : [0, 1, 2].map((i) => (
-                  <div key={i} className="field" aria-hidden="true">
-                    <span style={{ height: 20, width: `${70 - i * 12}%`, background: "#ececea", borderRadius: 6 }} />
-                    <span style={{ height: 16, width: "40%", background: "#f0f0ee", borderRadius: 6 }} />
-                    <span style={{ height: 44, background: "#fff", border: "1px solid var(--border)", borderRadius: 14 }} />
+                  <div key={i} className="field sk" aria-hidden="true">
+                    <span style={{ height: 20, width: `${70 - i * 12}%` }} />
+                    <span style={{ height: 14, width: "40%" }} />
+                    <span className="sk-input" />
                   </div>
                 ))}
             {error && <p className="error-line">{error}</p>}
             {p.status === "error" && <p className="error-line">{p.error}</p>}
-            <div style={{ display: "flex", gap: 12, alignItems: "center" }}>
-              <button className="btn primary" disabled={!listo || busy}>
-                {busy ? "Enviando…" : "Que trabajen los agentes"} <Icon name="arrow" />
+            <div className="hoja-foot">
+              <button className={`btn primary${busy ? " busy" : ""}`} disabled={!listo || busy} aria-busy={busy}>
+                {busy ? "Enviando" : "Que trabajen los agentes"} <Icon name="arrow" />
               </button>
-              <span className="muted" style={{ fontSize: 13 }}>{listo ? "Tarda uno o dos minutos." : "Preparando las preguntas…"}</span>
+              <span className="muted">{listo ? "Tarda uno o dos minutos." : "La entrevistadora está preparando las preguntas."}</span>
             </div>
-          </div>
-        </form>
-        <section className="panel s5" aria-labelledby="espera-h">
-          <div className="panel-head">
-            <h2 id="espera-h">Cómo sigue</h2>
-          </div>
+          </form>
+        </div>
+        <aside className="rotulo-side" aria-labelledby="espera-h">
+          <h2 id="espera-h">Cómo sigue</h2>
           <Fases agentes={p.agentes}>
             {(a) => (
               <li key={a.key} className="rowcard" style={{ minHeight: 52 }}>
@@ -72,8 +70,8 @@ export default function Interview({ p }: { p: Project }) {
               </li>
             )}
           </Fases>
-        </section>
+        </aside>
       </div>
-    </div>
+    </section>
   );
 }

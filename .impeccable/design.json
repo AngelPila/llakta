@@ -1,0 +1,436 @@
+{
+  "schemaVersion": 2,
+  "generatedAt": "2026-10-27T14:23:59.060168+00:00",
+  "title": "Design System: Llakta",
+  "extensions": {
+    "colorMeta": {
+      "paramo": {
+        "role": "primary",
+        "displayName": "Verde páramo",
+        "canonical": "#24533b",
+        "tonalRamp": [
+          "#0e2418",
+          "#163826",
+          "#1d4630",
+          "#24533b",
+          "#3f7457",
+          "#6f9a80",
+          "#a9c3b2",
+          "#dcebe1"
+        ]
+      },
+      "paramo-deep": {
+        "role": "primary",
+        "displayName": "Páramo hondo",
+        "canonical": "#163826",
+        "tonalRamp": [
+          "#0e2418",
+          "#163826",
+          "#1d4630",
+          "#24533b",
+          "#3f7457",
+          "#6f9a80",
+          "#a9c3b2",
+          "#dcebe1"
+        ]
+      },
+      "paja": {
+        "role": "secondary",
+        "displayName": "Dorado de paja",
+        "canonical": "#e0a92e",
+        "tonalRamp": [
+          "#4a3608",
+          "#7a580f",
+          "#b08018",
+          "#e0a92e",
+          "#eab747",
+          "#f2cf7f",
+          "#f8ecd0",
+          "#fbf0d9"
+        ]
+      },
+      "paja-hover": {
+        "role": "secondary",
+        "displayName": "Paja clara",
+        "canonical": "#eab747",
+        "tonalRamp": [
+          "#4a3608",
+          "#7a580f",
+          "#b08018",
+          "#e0a92e",
+          "#eab747",
+          "#f2cf7f",
+          "#f8ecd0",
+          "#fbf0d9"
+        ]
+      },
+      "paja-soft": {
+        "role": "secondary",
+        "displayName": "Paja suave",
+        "canonical": "#fbf0d9",
+        "tonalRamp": [
+          "#4a3608",
+          "#7a580f",
+          "#b08018",
+          "#e0a92e",
+          "#eab747",
+          "#f2cf7f",
+          "#f8ecd0",
+          "#fbf0d9"
+        ]
+      },
+      "barro": {
+        "role": "tertiary",
+        "displayName": "Barro cocido",
+        "canonical": "#8c3b22",
+        "tonalRamp": [
+          "#2e130a",
+          "#4f2013",
+          "#6e2e1a",
+          "#8c3b22",
+          "#a9583e",
+          "#c98d78",
+          "#e8c4b7",
+          "#f6e1da"
+        ]
+      },
+      "neblina": {
+        "role": "neutral",
+        "displayName": "Neblina",
+        "canonical": "#f2f5f1",
+        "tonalRamp": [
+          "#13231a",
+          "#2b3a31",
+          "#4d5c53",
+          "#66746b",
+          "#b9c6bd",
+          "#d3ddd6",
+          "#edf2ee",
+          "#f2f5f1"
+        ]
+      },
+      "tinta": {
+        "role": "neutral",
+        "displayName": "Tinta",
+        "canonical": "#13231a",
+        "tonalRamp": [
+          "#13231a",
+          "#2b3a31",
+          "#4d5c53",
+          "#66746b",
+          "#b9c6bd",
+          "#d3ddd6",
+          "#edf2ee",
+          "#f2f5f1"
+        ]
+      },
+      "tinta-muted": {
+        "role": "neutral",
+        "displayName": "Tinta apagada",
+        "canonical": "#4d5c53",
+        "tonalRamp": [
+          "#13231a",
+          "#2b3a31",
+          "#4d5c53",
+          "#66746b",
+          "#b9c6bd",
+          "#d3ddd6",
+          "#edf2ee",
+          "#f2f5f1"
+        ]
+      },
+      "sobre-paramo": {
+        "role": "neutral",
+        "displayName": "Sobre páramo",
+        "canonical": "#d7e6dc",
+        "tonalRamp": [
+          "#0e2418",
+          "#163826",
+          "#1d4630",
+          "#24533b",
+          "#3f7457",
+          "#6f9a80",
+          "#a9c3b2",
+          "#dcebe1"
+        ]
+      },
+      "hoja": {
+        "role": "neutral",
+        "displayName": "Hoja",
+        "canonical": "#ffffff",
+        "tonalRamp": [
+          "#13231a",
+          "#2b3a31",
+          "#4d5c53",
+          "#66746b",
+          "#b9c6bd",
+          "#d3ddd6",
+          "#edf2ee",
+          "#ffffff"
+        ]
+      },
+      "raised": {
+        "role": "neutral",
+        "displayName": "Levantado",
+        "canonical": "#edf2ee",
+        "tonalRamp": [
+          "#13231a",
+          "#2b3a31",
+          "#4d5c53",
+          "#66746b",
+          "#b9c6bd",
+          "#d3ddd6",
+          "#edf2ee",
+          "#f2f5f1"
+        ]
+      },
+      "border": {
+        "role": "neutral",
+        "displayName": "Borde",
+        "canonical": "#d3ddd6",
+        "tonalRamp": [
+          "#13231a",
+          "#2b3a31",
+          "#4d5c53",
+          "#66746b",
+          "#b9c6bd",
+          "#d3ddd6",
+          "#edf2ee",
+          "#f2f5f1"
+        ]
+      },
+      "control": {
+        "role": "neutral",
+        "displayName": "Control",
+        "canonical": "#b9c6bd",
+        "tonalRamp": [
+          "#13231a",
+          "#2b3a31",
+          "#4d5c53",
+          "#66746b",
+          "#b9c6bd",
+          "#d3ddd6",
+          "#edf2ee",
+          "#f2f5f1"
+        ]
+      },
+      "error": {
+        "role": "neutral",
+        "displayName": "Error",
+        "canonical": "#a3271b",
+        "tonalRamp": [
+          "#2e0b07",
+          "#5a160f",
+          "#8a1f15",
+          "#a3271b",
+          "#c4554a",
+          "#e09a92",
+          "#f5d3cf",
+          "#fbe7e4"
+        ]
+      }
+    },
+    "typographyMeta": {
+      "display": {
+        "displayName": "Rótulo",
+        "purpose": "Titular pintado sobre el campo verde, con sombra pintada de tinta."
+      },
+      "headline": {
+        "displayName": "Nombre del proyecto",
+        "purpose": "Titular del lienzo del proyecto, en verde páramo."
+      },
+      "title": {
+        "displayName": "Título de hoja",
+        "purpose": "Títulos de hojas y paneles, conteos y cifras."
+      },
+      "body-lede": {
+        "displayName": "Entradilla",
+        "purpose": "Entradillas y citas sobre el verde."
+      },
+      "body": {
+        "displayName": "Cuerpo",
+        "purpose": "Listas, documentos y texto general."
+      },
+      "label": {
+        "displayName": "Etiqueta",
+        "purpose": "Etiquetas de campos y títulos de filas."
+      },
+      "small": {
+        "displayName": "Pequeña",
+        "purpose": "Pistas, metadatos, encabezados de tabla."
+      }
+    },
+    "shadows": [
+      {
+        "name": "sombra-pintada",
+        "value": "0.06em 0.06em 0 #13231a",
+        "purpose": "text-shadow del display sobre el campo verde; nunca en cajas."
+      },
+      {
+        "name": "compositor",
+        "value": "0 12px 28px -12px rgba(19, 35, 26, 0.35)",
+        "purpose": "Única sombra de caja: el compositor flotante del coordinador."
+      },
+      {
+        "name": "foco-campo",
+        "value": "0 0 0 3px #cfe2d6",
+        "purpose": "Anillo de foco de campos."
+      },
+      {
+        "name": "halo-ahora",
+        "value": "0 0 0 4px rgba(224, 169, 46, 0.3)",
+        "purpose": "Halo de la parada actual en el camino de agentes."
+      }
+    ],
+    "motion": [
+      {
+        "name": "ease",
+        "value": "cubic-bezier(0.2, 0, 0, 1)",
+        "purpose": "Curva por defecto de los cambios de estado."
+      },
+      {
+        "name": "t-quick",
+        "value": "120ms",
+        "purpose": "Hover de botones, filas y navegación."
+      },
+      {
+        "name": "t-std",
+        "value": "240ms",
+        "purpose": "Cambios de estado de paradas y casillas."
+      },
+      {
+        "name": "foto-entrada",
+        "value": "900ms entrada + deriva lenta de 40s",
+        "purpose": "La foto enmarcada del inicio entra y se desplaza muy despacio."
+      }
+    ],
+    "breakpoints": [
+      {
+        "name": "telefono",
+        "value": "900px"
+      },
+      {
+        "name": "telefono-chico",
+        "value": "480px"
+      }
+    ]
+  },
+  "components": [
+    {
+      "name": "Acción de paja",
+      "kind": "button",
+      "refersTo": "button-primary",
+      "description": "La única acción principal de cada vista.",
+      "html": "<button class=\"ds-btn-primary\">Armar el plan <svg width=\"16\" height=\"16\" viewBox=\"0 0 16 16\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"1.6\"><path d=\"M3 8h10M9 4l4 4-4 4\"/></svg></button>",
+      "css": ".ds-btn-primary { display: inline-flex; align-items: center; gap: 8px; height: 48px; padding: 0 22px; border: 0; border-radius: 10px; background: var(--paja, #e0a92e); color: var(--tinta, #13231a); font: 700 16px/1 var(--letra, Rubik, system-ui, sans-serif); cursor: pointer; transition: background 120ms cubic-bezier(0.2,0,0,1); } .ds-btn-primary:hover { background: var(--paja-hover, #eab747); } .ds-btn-primary:focus-visible { outline: 2px solid var(--tinta, #13231a); outline-offset: 2px; } .ds-btn-primary[disabled] { background: #d9ded9; color: #4d5c53; }"
+    },
+    {
+      "name": "Botón blanco",
+      "kind": "button",
+      "refersTo": "button-secondary",
+      "description": "Acciones secundarias y el botón de cada tarea.",
+      "html": "<button class=\"ds-btn-secondary\">Subir foto</button>",
+      "css": ".ds-btn-secondary { display: inline-flex; align-items: center; gap: 8px; height: 40px; padding: 0 16px; border: 1.5px solid #13231a; border-radius: 10px; background: #fff; color: #13231a; font: 600 15px/1 Rubik, system-ui, sans-serif; cursor: pointer; transition: background 120ms cubic-bezier(0.2,0,0,1); } .ds-btn-secondary:hover { background: #edf2ee; } .ds-btn-secondary:focus-visible { outline: 2px solid #24533b; outline-offset: 2px; }"
+    },
+    {
+      "name": "Campo",
+      "kind": "input",
+      "refersTo": "input",
+      "description": "Campo de texto sobre hoja blanca.",
+      "html": "<label class=\"ds-field\"><span>Tu nombre</span><input class=\"ds-input\" placeholder=\"Así te verá tu equipo\"></label>",
+      "css": ".ds-field { display: flex; flex-direction: column; gap: 6px; font: 600 15px/1.4 Rubik, system-ui, sans-serif; color: #13231a; } .ds-input { height: 44px; padding: 0 14px; border: 1.5px solid #b9c6bd; border-radius: 10px; background: #fff; font: 400 16px Rubik, system-ui, sans-serif; color: #13231a; caret-color: #24533b; outline: none; } .ds-input::placeholder { color: #66746b; } .ds-input:focus { border-color: #24533b; box-shadow: 0 0 0 3px #cfe2d6; }"
+    },
+    {
+      "name": "Chip de ejemplo",
+      "kind": "chip",
+      "refersTo": "chip-example",
+      "description": "Ejemplos que rellenan el problema.",
+      "html": "<button class=\"ds-chip\">Puente caído</button>",
+      "css": ".ds-chip { height: 32px; padding: 0 14px; border: 1.5px solid #b9c6bd; border-radius: 999px; background: #fff; color: #13231a; font: 500 14px/1 Rubik, system-ui, sans-serif; cursor: pointer; } .ds-chip:hover { border-color: #24533b; background: #edf4ef; } .ds-chip:focus-visible { outline: 2px solid #24533b; outline-offset: 2px; }"
+    },
+    {
+      "name": "Hoja",
+      "kind": "card",
+      "refersTo": "hoja",
+      "description": "Contenedor blanco con borde de tinta para todo contenido.",
+      "html": "<section class=\"ds-hoja\"><h3>Por qué pasa</h3><p>Los sumideros están tapados y nadie es dueño del problema.</p></section>",
+      "css": ".ds-hoja { padding: 24px; background: #fff; color: #13231a; border: 2px solid #13231a; border-radius: 14px; font: 400 16px/24px Rubik, system-ui, sans-serif; } .ds-hoja h3 { margin: 0 0 12px; font: 400 24px/1.15 'Alfa Slab One', Rockwell, serif; color: #24533b; } .ds-hoja p { margin: 0; }"
+    },
+    {
+      "name": "Campo del rótulo",
+      "kind": "custom",
+      "refersTo": "display",
+      "description": "Titular pintado con sombra sobre el campo verde.",
+      "html": "<div class=\"ds-rotulo\"><h1>¿Qué problema de tu comunidad quieres resolver?</h1><p>Cuéntalo como se lo contarías a un amigo.</p></div>",
+      "css": ".ds-rotulo { padding: 40px; background: #24533b; color: #fff; } .ds-rotulo h1 { margin: 0; max-width: 15ch; font: 400 48px/1.06 'Alfa Slab One', Rockwell, serif; text-shadow: 0.06em 0.06em 0 #13231a; } .ds-rotulo p { margin: 20px 0 0; max-width: 52ch; font: 400 18px/28px Rubik, system-ui, sans-serif; color: #d7e6dc; }"
+    },
+    {
+      "name": "Barra de barro",
+      "kind": "nav",
+      "refersTo": "barra",
+      "description": "Barra superior de las pantallas completas y del teléfono.",
+      "html": "<header class=\"ds-barra\"><a class=\"ds-marca\" href=\"#\"><svg width=\"22\" height=\"22\" viewBox=\"0 0 20 20\"><path d=\"M7 1h6v3h3v3h3v6h-3v3h-3v3H7v-3H4v-3H1V7h3V4h3z\" fill=\"#e0a92e\"/><rect x=\"8\" y=\"8\" width=\"4\" height=\"4\" fill=\"#8c3b22\"/></svg>Llakta</a><nav><a href=\"#\">Comunidad</a></nav></header>",
+      "css": ".ds-barra { display: flex; align-items: center; justify-content: space-between; height: 60px; padding: 0 24px; background: #8c3b22; color: #fff; } .ds-marca { display: flex; align-items: center; gap: 10px; color: #fff; text-decoration: none; font: 400 24px/1 'Alfa Slab One', Rockwell, serif; } .ds-barra nav a { display: inline-flex; align-items: center; height: 40px; padding: 0 14px; border-radius: 8px; color: #f6e3dc; text-decoration: none; font: 500 15px Rubik, system-ui, sans-serif; transition: background 120ms; } .ds-barra nav a:hover { background: rgba(255,255,255,0.12); color: #fff; } .ds-barra a:focus-visible { outline: 2px solid #e0a92e; outline-offset: 2px; }"
+    },
+    {
+      "name": "Riel del proyecto",
+      "kind": "nav",
+      "refersTo": "riel",
+      "description": "Navegación lateral verde con la sección actual en placa de paja.",
+      "html": "<nav class=\"ds-riel\"><a aria-current=\"page\" href=\"#\">Resumen</a><a href=\"#\">Tareas <b>3 sin persona</b></a><a href=\"#\">Vecinos</a></nav>",
+      "css": ".ds-riel { display: flex; flex-direction: column; gap: 2px; width: 224px; padding: 16px 12px; background: #24533b; } .ds-riel a { display: flex; align-items: center; justify-content: space-between; height: 32px; padding: 0 10px; border-radius: 8px; color: #d7e6dc; text-decoration: none; font: 500 14px Rubik, system-ui, sans-serif; } .ds-riel a b { font-size: 11px; font-weight: 600; color: #e0a92e; } .ds-riel a:hover { background: rgba(255,255,255,0.1); color: #fff; } .ds-riel a[aria-current=page] { background: #e0a92e; color: #13231a; font-weight: 600; } .ds-riel a:focus-visible { outline: 2px solid #e0a92e; outline-offset: 2px; }"
+    }
+  ],
+  "narrative": {
+    "northStar": "Rótulo popular",
+    "overview": "**Creative North Star: \"Rótulo popular\"**\n\nLlakta se anuncia como un rótulo de barrio pintado a mano: campos plenos de verde páramo, la pregunta en letra de rótulo blanca con su sombra pintada en tinta, la acción en dorado de paja y la barra superior en barro cocido. Lo que la persona escribe y lo que los agentes devuelven cae en hojas blancas con borde de tinta, puestas sobre el verde o sobre la neblina del lienzo.\n\nEl sistema tiene dos registros que se alternan. El campo verde (inicio, entrevista, sala de agentes, páginas públicas, riel del proyecto) es el rótulo: letra grande, poco texto, una sola acción dorada. El lienzo de neblina (vistas del proyecto) es el tablero de trabajo: hojas blancas de borde de tinta, títulos en letra de rótulo verde y cuerpo en Rubik. La densidad es moderada; todo está pensado para leerse en un celular y en un proyector.\n\nLas fotos son reales, de comunidades y mingas, enmarcadas en blanco con su crédito debajo. No hay degradados, ni vidrio, ni sombras difusas en las tarjetas.",
+    "keyCharacteristics": [
+      "Campos de color pleno de ancho completo, nunca degradados.",
+      "Letra de rótulo (Alfa Slab One) solo para titulares, conteos y títulos de hoja; Rubik para todo lo demás.",
+      "Hojas blancas con borde de tinta de 2px como único contenedor de contenido.",
+      "Una acción dorada de paja por vista, con texto en tinta.",
+      "Barra de barro arriba en todas las pantallas a pantalla completa y en el teléfono."
+    ],
+    "rules": [
+      {
+        "name": "La Regla de la Paja",
+        "body": "El dorado de paja marca lo que se hace o lo que es ahora: la acción, la sección actual, la parada en curso, la casilla firmada. Nunca decora. Una sola acción dorada por vista; el texto sobre paja es siempre tinta, nunca blanco.",
+        "section": "colors"
+      },
+      {
+        "name": "La Regla del Campo Pleno",
+        "body": "El verde páramo va en campos de ancho completo o en placas enteras (riel, firmas, QR), de color plano y sin degradado. Sobre él, el texto es blanco o sobre-páramo.",
+        "section": "colors"
+      },
+      {
+        "name": "La Regla de la Sombra Pintada",
+        "body": "La letra de rótulo sobre el campo verde lleva su sombra pintada: un desplazamiento duro de 0.06em en tinta, sin desenfoque. Es el gesto del pintor de rótulos y es propio de este mundo; solo va en el display sobre verde, nunca en títulos de hoja, cuerpo ni cajas.",
+        "section": "typography"
+      },
+      {
+        "name": "La Regla de las Dos Letras",
+        "body": "Alfa Slab One solo para titulares, títulos y números que se cuentan; nunca en párrafos, botones, etiquetas ni navegación. Sin mayúsculas sostenidas ni tracking abierto: la letra de rótulo se escribe en caja normal.",
+        "section": "typography"
+      },
+      {
+        "name": "La Regla del Borde de Tinta",
+        "body": "Una hoja se separa del fondo con borde de tinta de 2px, no con sombra. Si algo necesita destacarse, cambia de fondo (paja suave, verde) o de borde, no de elevación.",
+        "section": "elevation"
+      }
+    ],
+    "dos": [
+      "**Do** pintar el titular de cada pantalla a pantalla completa sobre el campo verde páramo, en Alfa Slab One con su sombra pintada de tinta (0.06em).",
+      "**Do** poner todo contenido sobre hojas blancas con borde de tinta de 2px y 14px de radio.",
+      "**Do** dejar una sola acción dorada de paja por vista, con texto tinta y dentro del primer vistazo.",
+      "**Do** enmarcar las fotos reales con 8px de blanco y contorno de tinta, con su crédito debajo.",
+      "**Do** dibujar marcas e iconos en SVG o CSS (rombo de hito, logotipo pixelado, círculos numerados)."
+    ],
+    "donts": [
+      "**Don't** usar degradados, vidrio, ni sombras difusas en tarjetas u hojas; la única sombra de caja es la del compositor flotante.",
+      "**Don't** poner texto blanco sobre paja ni usar paja como decoración.",
+      "**Don't** usar Alfa Slab One en párrafos, botones, etiquetas o navegación, ni escribirla en mayúsculas sostenidas.",
+      "**Don't** aplicar la sombra pintada fuera del display sobre verde.",
+      "**Don't** traer la serif ni el teal de la base anterior (Instrument Serif, #1b6e66) a pantallas nuevas."
+    ]
+  }
+}

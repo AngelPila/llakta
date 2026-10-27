@@ -1,7 +1,8 @@
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { listProjects } from "@/lib/store";
-import { Icon, Mark } from "@/components/ui";
+import Barra from "@/components/Barra";
+import { Icon } from "@/components/ui";
 import { portada } from "@/lib/fotos";
 import { rolesAbiertos, semanaActual } from "@/lib/view";
 
@@ -21,22 +22,24 @@ export default async function ProyectoPublico({ params }: { params: Promise<{ id
   const casillas = Math.min(p.campana?.metaFirmas ?? 0, 60);
   const llenas = p.campana ? Math.round((p.campana.firmas.length / p.campana.metaFirmas) * casillas) : 0;
   return (
-    <main className="campaign">
-      <header className="campaign-bar">
-        <Link href="/comunidad" className="link" style={{ display: "inline-flex", alignItems: "center", gap: 6 }}>
-          <span style={{ display: "inline-flex", transform: "rotate(180deg)" }}>
-            <Icon name="arrow" size={14} />
-          </span>{" "}
-          Comunidad
-        </Link>
-        <span className="brand" style={{ padding: 0, height: "auto", fontSize: 13 }}>
-          <Mark size={16} /> Llakta
-        </span>
-      </header>
-      <div className="col comunidad">
-        <h1 className="greeting">{p.tituloCorto}</h1>
-        {p.ficha?.lugar && <p className="lede">{p.ficha.lugar}</p>}
-        <div className="grid after-head" style={{ alignItems: "start" }}>
+    <div className="home">
+      <Barra />
+      <section className="rotulo rotulo-corto" aria-labelledby="pp-h">
+        <div className="rotulo-in">
+          <div className="rotulo-main">
+            <Link href="/comunidad" className="rotulo-volver">
+              <span aria-hidden="true" style={{ display: "inline-flex", transform: "rotate(180deg)" }}>
+                <Icon name="arrow" size={14} />
+              </span>
+              Comunidad
+            </Link>
+            <h1 id="pp-h" className="rotulo-title sm">{p.tituloCorto}</h1>
+            {p.ficha?.lugar && <p className="rotulo-lede">{p.ficha.lugar}</p>}
+          </div>
+        </div>
+      </section>
+      <div className="comunidad">
+        <div className="grid" style={{ alignItems: "start" }}>
           <div className="s7" style={{ display: "flex", flexDirection: "column", gap: 16 }}>
             {f && (
               <figure className="home-photo">
@@ -118,6 +121,6 @@ export default async function ProyectoPublico({ params }: { params: Promise<{ id
           </div>
         </div>
       </div>
-    </main>
+    </div>
   );
 }

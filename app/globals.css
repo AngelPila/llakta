@@ -339,7 +339,6 @@ table.ideas.decided tr:not(.win) { animation: dim var(--t-slow) var(--ease) 200m
 table.ideas tr.win td { position: relative; }
 table.ideas tr.win td::before { content: ""; position: absolute; inset: 0; background: var(--accent-soft); transform-origin: left; animation: wipe var(--t-slow) var(--ease) 300ms both; z-index: 0; }
 table.ideas tr.win td > * { position: relative; z-index: 1; }
-table.ideas tr.win td:first-child { box-shadow: inset 3px 0 0 var(--accent); padding-left: 10px; }
 table.ideas tr.win .pill { animation: pop var(--t-std) var(--ease-settle) 620ms both; }
 .score { display: inline-flex; align-items: center; gap: 6px; }
 .score .track { width: 44px; height: 4px; border-radius: 4px; background: #e4e4e1; overflow: hidden; }
@@ -355,18 +354,6 @@ table.ideas tr.win .pill { animation: pop var(--t-std) var(--ease-settle) 620ms 
 }
 
 /* ---------- portada ---------- */
-.agent-list { display: flex; flex-direction: column; }
-/* Los nueve agentes son lo que esta pantalla promete: se leen a lo ancho, no plegados.
-   El oficio va bajo el nombre para que quepa entero en vez de cortarse. */
-.agent-list.cols { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); column-gap: var(--gap); }
-.agent-list.cols li { flex-direction: column; align-items: flex-start; gap: 2px; min-width: 0; white-space: normal; overflow: visible; }
-.agent-list.cols span { white-space: normal; overflow: visible; }
-.agent-list.cols li + li { border-top: 0; }
-.agent-list.cols li:not(:nth-child(-n + 3)) { border-top: 1px solid var(--border); }
-.agent-list li { display: flex; gap: 8px; align-items: baseline; padding: 8px 0; font-size: 14px; line-height: 20px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-.agent-list li + li { border-top: 1px solid var(--border); }
-.agent-list b { font-weight: 500; flex: none; }
-.agent-list span { color: var(--muted); min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
 .agents-fold summary { list-style: none; cursor: pointer; margin-bottom: 0; }
 .agents-fold summary::-webkit-details-marker { display: none; }
 .agents-fold[open] summary { margin-bottom: 8px; }
@@ -439,7 +426,7 @@ table.ideas tr.win .pill { animation: pop var(--t-std) var(--ease-settle) 620ms 
 .bar { position: relative; display: flex; align-items: flex-start; gap: 4px; min-height: 24px; padding: 3px 8px; border-radius: 6px; font-size: 12px; line-height: 16px; background: #fff; border: 1px solid var(--control); color: var(--text); min-width: 0; }
 .bar span { overflow: hidden; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; }
 .bar svg { margin-top: 3px; }
-.bar.en_curso { background: var(--accent-soft); border-color: transparent; box-shadow: inset 3px 0 0 var(--accent); color: var(--pill-accent-ink); }
+.bar.en_curso { background: var(--accent-soft); border-color: transparent; box-shadow: inset 0 0 0 1.5px var(--accent); color: var(--pill-accent-ink); }
 .bar.hecha { background: #ececea; border-color: transparent; color: var(--muted); }
 .bar svg { flex: none; }
 .today { position: absolute; top: 0; bottom: 0; width: 1px; background: var(--accent); z-index: 1; pointer-events: none; }
@@ -484,11 +471,6 @@ table.ideas tr.win .pill { animation: pop var(--t-std) var(--ease-settle) 620ms 
   .lane .who .avatar { display: none; }
   .task-more { padding-left: 14px; }
   .task-grid { grid-template-columns: minmax(0, 1fr); }
-  .agent-list.cols { grid-template-columns: minmax(0, 1fr); }
-  .agent-list.cols li:not(:nth-child(-n + 3)) { border-top: 0; }
-  .agent-list.cols li + li { border-top: 1px solid var(--border); }
-  .agent-list li, .agent-list span { white-space: normal; }
-  .agent-list li { flex-wrap: wrap; column-gap: 8px; row-gap: 0; }
 }
 @media print {
   .sidebar, .topbar, .composer, .panel-head .end, .s4 { display: none !important; }
@@ -607,7 +589,7 @@ table.ideas tr.win .pill { animation: pop var(--t-std) var(--ease-settle) 620ms 
 .lane { --tint: hsl(var(--h, 170) 58% 90%); --tint-ink: hsl(var(--h, 170) 62% 22%); }
 .lane.libre .who .n { color: var(--muted); }
 .bar { border: 0; border-radius: 6px; padding: 5px 8px; background: var(--tint); color: var(--tint-ink); font-weight: 600; }
-.bar.en_curso { background: var(--tint); box-shadow: inset 3px 0 0 var(--tint-ink); color: var(--tint-ink); }
+.bar.en_curso { background: var(--tint); box-shadow: inset 0 0 0 1.5px var(--tint-ink); color: var(--tint-ink); }
 .bar.hecha { background: #eceeec; color: var(--muted); text-decoration: line-through; text-decoration-color: #b9c0ba; }
 .camino-key i.bar { background: hsl(170 58% 90%); }
 .camino-key i.bar.hecha { background: #eceeec; }
@@ -725,3 +707,454 @@ table.ideas.choosing tbody tr:hover td { background: var(--rule); }
 table.ideas.choosing input[type="radio"] { accent-color: var(--accent); margin: 0; flex: none; transform: translateY(1px); }
 table.ideas.choosing .t { flex-wrap: nowrap; align-items: baseline; cursor: pointer; }
 table.ideas.choosing .t span:first-of-type { min-width: 0; }
+
+/* Pliegues: el titular a la vista, el detalle al tocar. */
+details.rowcard.fold { display: block; min-height: 0; padding: 0; }
+details.fold summary { list-style: none; cursor: pointer; }
+details.fold summary::-webkit-details-marker { display: none; }
+details.rowcard.fold summary { display: flex; align-items: center; gap: 12px; padding: 11px 14px; }
+details.rowcard.fold summary .t { flex: 1; min-width: 0; white-space: normal; }
+details.rowcard.fold .chev { flex: none; color: var(--muted); transition: transform var(--t-quick) var(--ease); }
+details.rowcard.fold[open] .chev { transform: rotate(180deg); }
+details.rowcard.fold > .sub { padding: 0 14px 12px; white-space: normal; font-size: 13px; line-height: 19px; }
+details.rowcard.fold:hover { border-color: var(--control); }
+table.ideas details.fold > .sub { margin-top: 4px; }
+
+/* =====================================================================
+   Rótulo popular, paleta Páramo (impeccable, seed:8aa2f33563d27c41).
+   Llakta se anuncia como un rótulo de barrio pintado a mano: la pregunta en letra de
+   rótulo con su sombra pintada sobre un campo verde de páramo, la acción en dorado de
+   paja, la barra en barro cocido. Se aplica pantalla por pantalla; el inicio va primero.
+   ===================================================================== */
+:root {
+  --paramo: #24533b;
+  --paramo-deep: #163826;
+  --paja: #e0a92e;
+  --paja-hover: #eab747;
+  --barro: #8c3b22;
+  --cielo: #3a6ea5;
+  --neblina: #f2f5f1;
+  --tinta: #13231a;
+  --tinta-muted: #4d5c53;
+  --sobre-paramo: #d7e6dc;
+  --rotulo: var(--font-rotulo), "Alfa Slab One", Rockwell, serif;
+  --letra: var(--font-letra), "Rubik", system-ui, sans-serif;
+}
+
+.home { min-height: 100svh; display: flex; flex-direction: column; background: var(--neblina); color: var(--tinta); font-family: var(--letra); --accent: var(--paramo); --accent-soft: #dcebe1; --control: #b9c6bd; }
+html:has(.home) { scrollbar-color: var(--paramo) var(--neblina); }
+.home ::selection { background: var(--paja); color: var(--tinta); }
+
+.home-bar { display: flex; align-items: center; justify-content: space-between; gap: 16px; height: 60px; padding: 0 40px; background: var(--barro); color: #fff; --mark: var(--paja); --mark-hole: var(--barro); }
+.home-brand { display: flex; align-items: center; gap: 10px; font: 400 24px/1 var(--rotulo); letter-spacing: 0.01em; }
+.home-nav { display: flex; align-items: center; gap: 4px; }
+.home-nav a { display: inline-flex; align-items: center; gap: 8px; height: 40px; padding: 0 14px; border-radius: 8px; font-size: 15px; font-weight: 500; color: #f6e3dc; transition: background var(--t-quick) var(--ease), color var(--t-quick) var(--ease); }
+.home-nav a:hover { background: rgba(255, 255, 255, 0.12); color: #fff; }
+.home-nav a:focus-visible, .home-brand:focus-visible { outline-color: var(--paja); }
+
+.rotulo { background: var(--paramo); color: #fff; }
+.rotulo-in { display: grid; grid-template-columns: minmax(0, 7fr) minmax(0, 5fr); gap: 56px; align-items: start; max-width: 1240px; margin: 0 auto; padding: 56px 40px 64px; }
+.rotulo-main { min-width: 0; }
+/* La sombra es la del pintor de rótulos: la letra lleva su sombra pintada en el verde hondo. */
+.rotulo-title { font: 400 clamp(38px, 5.2vw, 68px)/1.06 var(--rotulo); letter-spacing: 0.005em; text-wrap: balance; max-width: 15ch; text-shadow: 0.06em 0.06em 0 var(--tinta); }
+.rotulo-lede { margin-top: 20px; font-size: 18px; line-height: 28px; color: var(--sobre-paramo); max-width: 52ch; }
+
+.rotulo .new-problem { margin-top: 32px; gap: 20px; padding: 24px; background: #fff; color: var(--tinta); border: 2px solid var(--tinta); border-radius: 14px; box-shadow: none; }
+.rotulo .field label { font-size: 15px; font-weight: 600; }
+.rotulo .textarea, .rotulo .input { border: 1.5px solid var(--control); border-radius: 10px; background: #fff; font-size: 16px; }
+.rotulo .textarea { min-height: 128px; }
+.rotulo .textarea, .rotulo .input { caret-color: var(--paramo); }
+.rotulo .textarea::placeholder, .rotulo .input::placeholder { color: #66746b; }
+.rotulo .textarea:focus, .rotulo .input:focus { border-color: var(--paramo); box-shadow: 0 0 0 3px #cfe2d6; }
+.rotulo .hint, .rotulo .muted { color: var(--tinta-muted); }
+.rotulo .btn.ghost { border: 1.5px solid var(--control); border-radius: 999px; font-weight: 500; }
+.rotulo .btn.ghost:hover { border-color: var(--paramo); background: #edf4ef; }
+.rotulo .btn.primary { height: 48px; padding: 0 22px; border-radius: 10px; background: var(--paja); color: var(--tinta); font-size: 16px; font-weight: 700; }
+.rotulo .btn.primary:hover { background: var(--paja-hover); }
+.rotulo .btn svg { flex: none; }
+.rotulo .btn.primary:focus-visible { outline-color: var(--tinta); }
+.rotulo .error-line { color: #a3271b; }
+
+.rotulo-in { align-items: stretch; }
+.rotulo-photo { margin: 0; display: flex; flex-direction: column; }
+.rotulo-photo .frame { flex: 1; min-height: 320px; border-radius: 14px; overflow: hidden; background: var(--paramo-deep); border: 8px solid #fff; outline: 2px solid var(--tinta); outline-offset: -1px; }
+.rotulo-photo img { width: 100%; height: 100%; object-fit: cover; animation: cover-in 900ms var(--ease) both, drift 40s ease-in-out 900ms infinite alternate; }
+.rotulo-photo figcaption { margin-top: 12px; font-size: 12px; line-height: 17px; color: var(--sobre-paramo); }
+.rotulo-photo a { text-decoration: underline; text-underline-offset: 2px; }
+.rotulo-photo a:hover { color: #fff; }
+
+.home-projects { width: 100%; max-width: 1240px; margin: 0 auto; padding: 56px 40px 24px; }
+.home-projects h2 { font: 400 30px/1.1 var(--rotulo); color: var(--paramo); }
+.home-list { margin-top: 20px; display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 12px; }
+.home-item { display: flex; align-items: center; gap: 14px; min-height: 72px; padding: 12px 16px; background: #fff; border: 2px solid var(--tinta); border-radius: 12px; transition: background var(--t-quick) var(--ease), transform var(--t-quick) var(--ease); }
+.home-item:hover { background: #e9f1ec; transform: translateY(-1px); }
+.home .pill { background: #e1ebf5; color: #234a72; }
+.home .pill.neg { background: #fbe7e4; color: #a3271b; }
+.home-item .thumb { width: 48px; height: 48px; border-radius: 8px; }
+.home-item .main { flex: 1; min-width: 0; display: flex; flex-direction: column; }
+.home-item .t { font-size: 16px; line-height: 22px; font-weight: 600; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.home-item .sub { font-size: 13px; line-height: 18px; color: var(--tinta-muted); }
+.home-item > svg { flex: none; color: var(--paramo); transition: transform var(--t-quick) var(--ease); }
+.home-item:hover > svg { transform: translateX(3px); }
+.home-foot { margin-top: auto; max-width: 1240px; width: 100%; margin-inline: auto; padding: 32px 40px; font-size: 12px; color: var(--tinta-muted); }
+
+@media (max-width: 900px) {
+  .home-bar { height: 56px; padding: 0 16px; }
+  .home-nav a { padding: 0 10px; font-size: 14px; }
+  .rotulo-in { grid-template-columns: minmax(0, 1fr); gap: 32px; padding: 32px 16px 40px; }
+  .rotulo-lede { font-size: 16px; line-height: 25px; }
+  .rotulo .new-problem { margin-top: 24px; padding: 18px; }
+  .rotulo-photo .frame { flex: none; min-height: 0; aspect-ratio: 3 / 2; border-width: 6px; }
+  .home-item .t { white-space: normal; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; }
+  .home-projects { padding: 40px 16px 16px; }
+  .home-list { grid-template-columns: minmax(0, 1fr); }
+  .home-foot { padding: 24px 16px; }
+}
+@media (max-width: 480px) {
+  .home-nav a:first-child:not(:last-child) { display: none; }
+}
+
+/* ---------- entrevista (rótulo Páramo) ----------
+   Sigue al inicio sin cortes: el título del problema pintado en el verde, la frase de la
+   persona citada debajo y las tres preguntas en la hoja blanca. A la derecha, el camino
+   de los agentes como paradas sobre el verde, la de ahora en dorado. */
+.rotulo-title.sm { font-size: clamp(32px, 4.2vw, 54px); max-width: 18ch; }
+.rotulo-quote { margin: 18px 0 0; padding: 0; font-size: 18px; line-height: 28px; color: var(--sobre-paramo); max-width: 56ch; quotes: "«" "»"; }
+.rotulo-quote::before { content: open-quote; }
+.rotulo-quote::after { content: close-quote; }
+
+.rotulo .hoja { margin-top: 32px; display: flex; flex-direction: column; gap: 22px; padding: 24px; background: #fff; color: var(--tinta); border: 2px solid var(--tinta); border-radius: 14px; }
+.hoja-title { font: 400 24px/1.15 var(--rotulo); color: var(--paramo); }
+.rotulo .hoja .field { gap: 6px; }
+.rotulo .hoja label { display: flex; align-items: baseline; gap: 10px; font-size: 16px; line-height: 23px; font-weight: 600; }
+.q-n { display: inline-grid; place-items: center; flex: none; width: 26px; height: 26px; border-radius: 50%; background: var(--paramo); color: #fff; font-size: 13px; font-weight: 700; transform: translateY(-1px); }
+.rotulo .hoja .hint { padding-left: 36px; font-size: 13px; line-height: 19px; }
+.rotulo .hoja .input { margin-top: 4px; }
+.hoja-foot { display: flex; align-items: center; gap: 14px; flex-wrap: wrap; }
+.hoja-foot .muted { font-size: 13px; line-height: 19px; }
+.rotulo .btn.primary[disabled] { opacity: 1; background: #d9ded9; color: var(--tinta-muted); }
+.sk span { display: block; border-radius: 6px; background: #e3e9e4; animation: breathe-soft 1600ms ease-in-out infinite; }
+.sk .sk-input { height: 44px; width: 100%; background: #fff; border: 1.5px solid #dbe3dd; animation: none; }
+
+.rotulo-side { min-width: 0; padding-top: 8px; }
+.rotulo-side h2 { font: 400 24px/1.15 var(--rotulo); margin-bottom: 20px; }
+.rotulo-side .fase::before { background: rgba(255, 255, 255, 0.25); }
+.rotulo-side .fase.hecha::before { background: var(--paja); }
+.rotulo-side .fase-n { background: var(--paramo); border: 2px solid rgba(255, 255, 255, 0.6); color: #fff; font-weight: 700; }
+.rotulo-side .fase.ahora .fase-n { background: var(--paja); border-color: var(--paja); color: var(--tinta); box-shadow: 0 0 0 4px rgba(224, 169, 46, 0.3); }
+.rotulo-side .fase.hecha .fase-n { background: #fff; border-color: #fff; color: var(--paramo); }
+.rotulo-side .fase-head b { font-size: 16px; color: #fff; }
+.rotulo-side .fase.despues .fase-head b { color: var(--sobre-paramo); }
+.rotulo-side .fase-st, .rotulo-side .fase.ahora .fase-st { color: var(--paja); font-weight: 600; }
+.rotulo-side .fase-agentes { color: var(--sobre-paramo); font-size: 13px; }
+.rotulo-side .rowcard { background: #fff; border: 2px solid var(--tinta); color: var(--tinta); }
+.rotulo-side .rowcard .sub { color: var(--tinta-muted); }
+
+@media (max-width: 900px) {
+  .rotulo-quote { font-size: 16px; line-height: 25px; }
+  .rotulo .hoja { margin-top: 24px; padding: 18px; }
+}
+.home > .rotulo:last-child { flex: 1; }
+
+/* ---------- sala de agentes (rótulo Páramo) ----------
+   Lo que va saliendo cae en hojas blancas, una debajo de otra; el equipo es la ruta de
+   paradas a la derecha, fija mientras se lee. */
+.sala-estado { margin-top: 14px; font-size: 17px; line-height: 26px; color: var(--sobre-paramo); }
+.sala-estado b { color: var(--paja); font-weight: 700; }
+.sala-actions { margin-top: 22px; display: flex; flex-wrap: wrap; align-items: center; gap: 12px; }
+.sala-actions .btn.primary { height: 48px; padding: 0 22px; border-radius: 10px; background: var(--paja); color: var(--tinta); font-size: 16px; font-weight: 700; }
+.sala-actions .btn.primary:hover { background: var(--paja-hover); }
+.sala-error { flex-basis: 100%; padding: 10px 14px; border-radius: 10px; background: #fbe7e4; color: #8a1f15; font-size: 14px; }
+.sala-out { margin-top: 32px; display: flex; flex-direction: column; gap: 20px; }
+.sala-out .hoja { margin-top: 0; }
+.rotulo .hoja-empty { color: var(--tinta-muted); font-size: 15px; }
+.rotulo .hoja .statement { font-size: 18px; line-height: 27px; max-width: 60ch; }
+.hoja-title { display: flex; align-items: center; flex-wrap: wrap; gap: 10px; }
+.hoja-chip { font: 600 13px/1 var(--letra); padding: 6px 10px; border-radius: 999px; background: var(--paja); color: var(--tinta); }
+.causas { display: flex; flex-direction: column; gap: 12px; }
+.causas li { display: flex; align-items: baseline; gap: 10px; font-size: 16px; line-height: 24px; }
+/* Las divisiones entre cifras son el fondo de tinta que asoma por el hueco de la retícula. */
+.cifras { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 2px; background: var(--tinta); border: 2px solid var(--tinta); border-radius: 10px; overflow: hidden; margin: 0; }
+.cifras > div { padding: 12px 14px; background: #fff; }
+.cifras dt { font-size: 13px; color: var(--tinta-muted); }
+.cifras dd { margin: 2px 0 0; font: 400 22px/1.2 var(--rotulo); color: var(--paramo); }
+.listos { display: flex; flex-direction: column; }
+.listos li { display: flex; align-items: center; gap: 12px; min-height: 48px; font-size: 16px; font-weight: 500; }
+.listos li + li { border-top: 1px solid #dbe3dd; }
+.listos svg { flex: none; color: var(--paramo); }
+.listos a { margin-left: auto; font-weight: 600; color: var(--paramo); text-decoration: underline; text-underline-offset: 3px; }
+
+.rotulo table.ideas { font-size: 15px; }
+.rotulo table.ideas th { font-size: 13px; color: var(--tinta-muted); }
+.rotulo table.ideas td { border-top-color: #dbe3dd; }
+.rotulo table.ideas .t { font-size: 15px; font-weight: 600; }
+.rotulo table.ideas tr.win td::before { background: #f8ecd0; }
+.rotulo table.ideas .pill.acc { background: var(--paja); color: var(--tinta); font-weight: 600; }
+.rotulo table.ideas.choosing tbody tr:hover td { background: #edf4ef; }
+.rotulo table.ideas.choosing input[type="radio"] { accent-color: var(--paramo); width: 18px; height: 18px; }
+.rotulo .score .track { background: #dbe3dd; }
+.rotulo { --score-off: #a9c3b2; }
+
+.sala .rotulo-side { position: sticky; top: 24px; align-self: start; }
+.rotulo-side .rowcard.agent.trabajando { border-color: var(--paja); }
+.rotulo-side .rowcard.agent .sweep { background: var(--paja); height: 3px; }
+.rotulo-side .glyph.trabajando { border-color: var(--paramo); }
+.rotulo-side .glyph.trabajando::after { background: var(--paramo); }
+.rotulo-side .glyph.listo { background: var(--paramo); border-color: var(--paramo); }
+
+@media (max-width: 900px) {
+  /* En el teléfono: el título, luego el equipo trabajando, luego lo que va saliendo. */
+  .sala .rotulo-in { display: flex; flex-direction: column; gap: 0; }
+  .sala .rotulo-main { display: contents; }
+  .sala .rotulo-side { position: static; order: 1; margin-top: 32px; }
+  .sala .sala-out { order: 2; }
+  .rotulo table.ideas.choosing .t { flex-wrap: wrap; }
+  .rotulo table.ideas.choosing .t span:first-of-type { flex: 1 1 0; }
+  .rotulo table.ideas.choosing .t .pill { margin-left: 28px; }
+  .cifras { grid-template-columns: minmax(0, 1fr); }
+}
+
+/* =====================================================================
+   El proyecto (rótulo Páramo): la barra lateral es el campo verde del rótulo, la
+   sección actual una placa de paja; el lienzo es neblina con hojas blancas de borde
+   de tinta y títulos en letra de rótulo. Vale para todas las vistas del proyecto.
+   ===================================================================== */
+.app, .home {
+  --ground: var(--neblina);
+  --surface: #ffffff;
+  --raised: #edf2ee;
+  --border: #d3ddd6;
+  --rule: #e2e9e4;
+  --control: #b9c6bd;
+  --active: rgba(255, 255, 255, 0.12);
+  --text: var(--tinta);
+  --muted: var(--tinta-muted);
+  --accent: var(--paramo);
+  --accent-soft: #dcebe1;
+  --accent-ink: #1a3f2c;
+  --pill-accent-bg: #dcebe1; --pill-accent-ink: #1a3f2c;
+  --primary: var(--tinta);
+  --finding: var(--barro);
+  --font: var(--letra);
+  --radius-card: 14px;
+  --radius-row: 10px;
+  --radius-control: 10px;
+  background: var(--neblina);
+  color: var(--tinta);
+  font-family: var(--letra);
+}
+html:has(.app) { background: var(--neblina); scrollbar-color: var(--paramo) var(--neblina); }
+:is(.app, .home) ::selection { background: var(--paja); color: var(--tinta); }
+:is(.app, .home) input, :is(.app, .home) textarea { caret-color: var(--paramo); }
+
+/* Barra lateral */
+:is(.app, .home) .sidebar { background: var(--paramo); color: #fff; border: 0; --mark: var(--paja); --mark-hole: var(--paramo); }
+:is(.app, .home) .brand { font: 400 22px/1 var(--rotulo); }
+:is(.app, .home) .scope { background: none; border: 1.5px solid rgba(255, 255, 255, 0.28); border-radius: 10px; }
+:is(.app, .home) .scope b { color: #fff; font-weight: 600; }
+:is(.app, .home) .scope span { color: var(--sobre-paramo); }
+:is(.app, .home) .nav-label { color: var(--sobre-paramo); font-size: 12px; font-weight: 600; letter-spacing: 0.04em; }
+:is(.app, .home) .nav a, :is(.app, .home) .nav button { color: var(--sobre-paramo); border-radius: 8px; font-weight: 500; }
+:is(.app, .home) .nav a:hover, :is(.app, .home) .nav button:hover:not([disabled]) { background: rgba(255, 255, 255, 0.1); color: #fff; }
+:is(.app, .home) .nav button[aria-current="page"], :is(.app, .home) .nav a[aria-current="page"] { color: var(--tinta); font-weight: 600; }
+:is(.app, .home) .nav-ind { background: var(--paja); border-radius: 8px; }
+:is(.app, .home) .nav .count { color: var(--paja); font-weight: 600; }
+:is(.app, .home) .nav button[aria-current="page"] .count { color: var(--tinta); }
+:is(.app, .home) .nav-hint { color: var(--sobre-paramo); }
+:is(.app, .home) .sidebar :focus-visible { outline-color: var(--paja); }
+:is(.app, .home) .camp-card { background: #fff; color: var(--tinta); border: 2px solid var(--tinta); border-radius: 12px; }
+:is(.app, .home) .camp-card a, :is(.app, .home) .camp-card .link { color: var(--paramo); }
+:is(.app, .home) .sidebar-foot { color: #fff; }
+:is(.app, .home) .sidebar-foot .meta { color: var(--sobre-paramo); }
+::view-transition-group(nav-ind) { mix-blend-mode: normal; }
+
+/* Teléfono: barra de barro arriba, menú como hoja verde. */
+@media (max-width: 900px) {
+  :is(.app, .home) .topbar { background: var(--barro); color: #fff; border: 0; --mark: var(--paja); --mark-hole: var(--barro); }
+  :is(.app, .home) .topbar .name { font: 400 18px/1 var(--rotulo); }
+  :is(.app, .home) .topbar button { color: #fff; }
+}
+
+/* Lienzo */
+:is(.app, .home) .greeting { font: 400 clamp(28px, 3.2vw, 40px)/1.1 var(--rotulo); color: var(--paramo); letter-spacing: 0; text-wrap: balance; }
+:is(.app, .home) .lede { font-size: 16px; color: var(--tinta-muted); }
+:is(.app, .home) .lede .finding { color: var(--barro); }
+:is(.app, .home) .panel { background: #fff; border: 2px solid var(--tinta); border-radius: 14px; }
+:is(.app, .home) .panel-head h2 { font: 400 22px/1.2 var(--rotulo); color: var(--paramo); letter-spacing: 0; }
+:is(.app, .home) .panel-head .chip { color: var(--tinta-muted); }
+:is(.app, .home) .panel-head .end .link, :is(.app, .home) .panel-head .end a { color: var(--paramo); font-weight: 600; }
+:is(.app, .home) .btn { border-radius: 10px; font-weight: 600; }
+:is(.app, .home) .btn.primary { background: var(--paja); color: var(--tinta); font-weight: 700; }
+:is(.app, .home) .btn.primary:hover { background: var(--paja-hover); }
+:is(.app, .home) .btn.ghost { border: 1.5px solid var(--tinta); background: #fff; }
+:is(.app, .home) .btn.ghost:hover { background: var(--raised); }
+:is(.app, .home) .btn svg { flex: none; }
+:is(.app, .home) .rowcard { border: 1.5px solid var(--border); }
+:is(.app, .home) .pill.acc { background: #dcebe1; color: #1a3f2c; }
+:is(.app, .home) .pill.pos { background: var(--paramo); color: #fff; }
+:is(.app, .home) .pill.quiet { background: #fff; border: 1.5px solid var(--border); color: var(--tinta-muted); }
+:is(.app, .home) .role { border-radius: 6px; }
+:is(.app, .home) .cover .frame { border-radius: 14px; border: 2px solid var(--tinta); }
+
+/* Resumen: esta semana */
+:is(.app, .home) .week-row { background: var(--raised); border-radius: 10px; }
+:is(.app, .home) .week-row:hover { background: #e3ebe5; }
+:is(.app, .home) .week-row.libre { background: #fbf0d9; }
+:is(.app, .home) .week-row.libre:hover { background: #f7e7c4; }
+:is(.app, .home) .week-row .late { color: var(--barro); font-weight: 600; }
+
+/* Firmas: un pedazo de rótulo; cada vecino que firma pinta su casilla de paja. */
+:is(.app, .home) .firmas { background: var(--paramo); color: #fff; border: 2px solid var(--tinta); border-radius: 14px; }
+:is(.app, .home) .firmas h2 { font: 400 22px/1.2 var(--rotulo); letter-spacing: 0; }
+:is(.app, .home) .firmas-count { font: 400 48px/1 var(--rotulo); letter-spacing: 0; }
+:is(.app, .home) .firmas-count small { font: 500 16px/1 var(--letra); color: var(--sobre-paramo); }
+:is(.app, .home) .casillas i { background: rgba(255, 255, 255, 0.16); }
+:is(.app, .home) .casillas i.on { background: var(--paja); }
+:is(.app, .home) .firmas-cap { color: var(--sobre-paramo); }
+:is(.app, .home) .firmas-foot a { color: var(--paja); }
+
+/* El camino */
+:is(.app, .home) .camino-head .weeks .now b { color: var(--barro); }
+:is(.app, .home) .camino-head .hito { color: var(--paramo); }
+:is(.app, .home) .today, :is(.app, .home) .today::before, :is(.app, .home) .camino-key .key-today { background: var(--barro); }
+:is(.app, .home) .bar.hecha { background: #e6ebe7; }
+
+/* El coordinador */
+:is(.app, .home) .composer { border: 2px solid var(--tinta); border-radius: 18px; box-shadow: 0 12px 28px -12px rgba(19, 35, 26, 0.35); }
+:is(.app, .home) .msg .acts div { color: var(--paramo); }
+:is(.app, .home) .suggest button { border-color: var(--border); background: #fff; color: var(--tinta-muted); }
+:is(.app, .home) .suggest button:hover { border-color: var(--tinta); color: var(--tinta); }
+:is(.app, .home) .canvas { padding: 0 40px 160px 36px; }
+@media (max-width: 900px) { :is(.app, .home) .canvas { padding: 0 16px 150px; } }
+/* La sala dentro del proyecto llena el lienzo: el verde llega a los bordes, separado del
+   riel por una línea honda. */
+:is(.app, .home) .canvas > .rotulo { margin: 0 -40px -160px -36px; min-height: 100svh; padding-bottom: 120px; }
+:is(.app, .home) .sidebar { box-shadow: inset -2px 0 0 var(--paramo-deep); }
+@media (max-width: 900px) { :is(.app, .home) .canvas > .rotulo { margin: 0 -16px -150px; min-height: 0; } }
+
+/* ---------- Tareas (rótulo Páramo) ---------- */
+/* El botón de cada tarea: blanco con borde de tinta; "Terminar" (lo que está en curso) en paja. */
+:is(.app, .home) .btn:not(.primary):not(.ghost) { background: #fff; border: 1.5px solid var(--tinta); }
+:is(.app, .home) .btn:not(.primary):not(.ghost):hover { background: var(--raised); }
+:is(.app, .home) .panel-head .meta { color: var(--tinta-muted); font-size: 14px; }
+/* La tira de avance: una casilla por tarea, como las firmas; hecha en verde, en curso en paja. */
+:is(.app, .home) .task-strip li { background: #dbe3dd; border-radius: 3px; }
+:is(.app, .home) .task-strip li.en_curso { background: var(--paja); }
+:is(.app, .home) .task-strip li.hecha { background: var(--paramo); }
+:is(.app, .home) .week-block h3 { font-size: 16px; }
+:is(.app, .home) .week-block h3 span { color: var(--tinta-muted); }
+:is(.app, .home) .week-block h3 .hito, :is(.app, .home) .camino-head .hito { color: var(--paramo); }
+/* El hito es un rombo pintado, no un carácter. */
+:is(.app, .home) .week-block h3 .hito::before, :is(.app, .home) .camino-head .hito::before { content: ""; display: inline-block; width: 7px; height: 7px; margin-right: 6px; background: var(--paja); transform: rotate(45deg) translateY(-2px); }
+:is(.app, .home) .done-fold summary h2 { font: 400 22px/1.2 var(--rotulo); color: var(--paramo); }
+:is(.app, .home) .done-fold summary .chip { color: var(--tinta-muted); }
+:is(.app, .home) .select { border: 1.5px solid var(--tinta); border-radius: 8px; background: #fff; }
+:is(.app, .home) .task-more { color: var(--tinta-muted); }
+
+/* ---------- Vecinos (rótulo Páramo) ----------
+   El QR es lo que el público escanea en la demo: va como un pedazo de rótulo, verde, con
+   el código sobre una placa blanca. Los lugares sin persona llevan el fondo de paja. */
+:is(.app, .home) .qr-card { background: var(--paramo); color: #fff; }
+:is(.app, .home) .qr-card .panel-head h2 { color: #fff; font-size: 26px; }
+:is(.app, .home) .qr-card img { background: #fff; padding: 14px; border-radius: 10px; border: 2px solid var(--tinta); max-width: 260px; }
+:is(.app, .home) .qr-card .note-line { color: var(--sobre-paramo); font-size: 14px; }
+:is(.app, .home) .rowcard.member:has(.avatar.open) { background: #fbf0d9; border-color: #ecd9ae; }
+:is(.app, .home) .btn[aria-pressed="true"] { background: var(--paja); border-color: var(--tinta); }
+:is(.app, .home) .pill.warn { background: #f6e1da; color: var(--barro); }
+
+/* ---------- Documentos (rótulo Páramo) ----------
+   La lista es la navegación del lector: va suelta sobre la neblina, sin hoja; el documento
+   elegido lleva la placa de paja. El documento abierto es la hoja. */
+:is(.app, .home) .doc-list { border: 0; background: none; padding: 0; }
+:is(.app, .home) .doc-list .rowcard { background: #fff; border: 1.5px solid var(--border); }
+:is(.app, .home) .doc-list .rowcard:hover { border-color: var(--tinta); }
+:is(.app, .home) .doc-list .rowcard.selected { background: #fbf0d9; border: 2px solid var(--tinta); }
+:is(.app, .home) .doc-list .rowcard svg { flex: none; color: var(--paramo); }
+:is(.app, .home) .doc .panel-head { align-items: flex-start; }
+:is(.app, .home) .doc .panel-head .end { padding-top: 4px; flex: none; }
+:is(.app, .home) .doc-body { font-size: 16px; line-height: 26px; }
+
+/* ---------- Investigación (rótulo Páramo) ---------- */
+.app { --score-off: #a9c3b2; }
+:is(.app, .home) table.ideas tr.win td { background: #f8ecd0; }
+:is(.app, .home) table.ideas tr.win td::before { background: #f8ecd0; }
+:is(.app, .home) table.ideas .pill.acc { background: var(--paja); color: var(--tinta); font-weight: 600; }
+:is(.app, .home) table.ideas td { border-top-color: var(--border); }
+:is(.app, .home) table.ideas th { color: var(--tinta-muted); }
+:is(.app, .home) details.rowcard.fold[open] { border-color: var(--tinta); }
+:is(.app, .home) details.rowcard.fold .chev { color: var(--paramo); }
+
+/* =====================================================================
+   Páginas públicas (rótulo Páramo): firmas, unirse y comunidad. Las abre el público
+   desde el celular: la barra de barro, el titular pintado en el verde y la acción
+   (firmar, sumarse) dentro del primer vistazo.
+   ===================================================================== */
+.rotulo-lugar { font-weight: 600; color: var(--paja); }
+.rotulo-volver { display: inline-flex; align-items: center; gap: 8px; margin-bottom: 16px; font-size: 15px; font-weight: 600; color: var(--sobre-paramo); }
+.rotulo-volver:hover { color: #fff; }
+.rotulo-cta { margin-top: 24px; }
+.rotulo .btn.primary.rotulo-cta { display: inline-flex; }
+.rotulo-corto .rotulo-in { grid-template-columns: minmax(0, 1fr); padding-bottom: 48px; }
+
+/* Firmas: la hoja de firmas a la derecha del titular. */
+.campaign .rotulo-in { align-items: start; }
+.campaign .sign { position: static; background: #fff; color: var(--tinta); border: 2px solid var(--tinta); border-radius: 14px; padding: 24px; }
+.campaign .sign-count { font: 400 52px/1 var(--rotulo); color: var(--paramo); letter-spacing: 0; }
+.campaign .sign-count > span:last-child { display: block; margin-top: 6px; font: 500 16px/1.3 var(--letra); color: var(--tinta-muted); }
+.campaign .sign-track { height: 12px; background: #e3e9e4; border-radius: 6px; }
+.campaign .sign-track span { background: var(--paja); border-radius: 6px; }
+.campaign .sign .btn.primary { height: 52px; font-size: 16px; white-space: normal; text-align: center; line-height: 1.25; padding: 8px 18px; }
+.campaign .sign-done { color: var(--paramo); font-weight: 600; }
+.campaign .sign-list { border-top: 1px solid #dbe3dd; padding-top: 16px; }
+.campaign .sign-list span { color: var(--tinta-muted); }
+.campaign-cuerpo { width: 100%; max-width: 760px; margin: 0 auto; padding: 48px 40px 80px; }
+.campaign .campaign-photo { margin: 0 0 32px; }
+.campaign .campaign-photo .frame { border-radius: 14px; border: 2px solid var(--tinta); }
+.campaign .photo-credit { color: var(--tinta-muted); }
+.campaign .campaign-body { margin-top: 0; font-size: 18px; line-height: 29px; }
+.campaign .campaign-gallery h2 { font: 400 28px/1.15 var(--rotulo); color: var(--paramo); }
+.campaign .campaign-gallery img { border: 2px solid var(--tinta); border-radius: 10px; }
+.campaign .campaign-sign { color: var(--tinta-muted); font-size: 15px; }
+
+/* Unirse */
+.invite-in { grid-template-columns: minmax(0, 1fr); max-width: 760px; }
+.invite-in .rotulo-lede b { color: var(--paja); font-weight: 600; }
+.invite-in .listos li { align-items: flex-start; padding: 10px 0; }
+.invite-in .listos .q-n { margin-top: 1px; }
+.invite-sem { display: block; font-size: 13px; font-weight: 400; color: var(--tinta-muted); }
+.invite-equipo { display: flex; align-items: center; gap: 6px; flex-wrap: wrap; font-size: 14px; color: var(--tinta-muted); }
+.invite-equipo span { margin-left: 4px; }
+.join { padding-top: 18px; border-top: 1px solid #dbe3dd; }
+.join label { font-size: 16px; font-weight: 600; }
+.join-row { display: flex; gap: 8px; }
+.join-row .input { flex: 1; min-width: 0; height: 48px; }
+.rotulo .join-row .btn.primary { height: 48px; flex: none; }
+
+/* Comunidad */
+.home .comunidad { width: 100%; max-width: 1240px; margin: 0 auto; padding: 40px 40px 80px; }
+.home .cards { margin-top: 0; }
+.home .card { border: 2px solid var(--tinta); border-radius: 14px; background: #fff; }
+.home .card:hover { transform: translateY(-2px); border-color: var(--tinta); background: #fbfcfb; }
+.home .card .frame { border-bottom: 2px solid var(--tinta); }
+.home .card-body b { font: 400 20px/1.2 var(--rotulo); color: var(--paramo); }
+.home .card-body .muted { color: var(--tinta-muted); }
+.home .comunidad .home-photo .frame { border: 2px solid var(--tinta); border-radius: 14px; }
+.home .comunidad .photo-credit { color: var(--tinta-muted); }
+.home .strip { gap: 2px; border: 2px solid var(--tinta); border-radius: 10px; background: var(--tinta); overflow: hidden; }
+.home .strip > div { background: #fff; }
+.home .strip > div + div { border-left: 0; }
+.home .strip b { font: 400 20px/1.2 var(--rotulo); color: var(--paramo); }
+.home .comunidad .rowcard .end.link { color: var(--paramo); font-weight: 600; }
+.home .comunidad .casillas { grid-template-columns: repeat(15, minmax(0, 1fr)); }
+.home .comunidad .casillas i { width: auto; height: auto; aspect-ratio: 1; background: #dbe3dd; }
+.home .comunidad .casillas i.on { background: var(--paja); }
+.home .comunidad .room-side { position: sticky; top: 24px; display: flex; flex-direction: column; gap: 16px; }
+
+@media (max-width: 900px) {
+  .campaign .sign-count { font-size: 44px; }
+  .campaign-cuerpo { padding: 32px 16px 64px; }
+  .campaign .campaign-body { font-size: 17px; line-height: 27px; }
+  .join-row { flex-direction: column; }
+  .home .comunidad { padding: 24px 16px 64px; }
+  .home .comunidad .room-side { position: static; }
+}

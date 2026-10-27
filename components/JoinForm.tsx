@@ -12,7 +12,7 @@ export default function JoinForm({ token, taken }: { token: string; taken: strin
 
   if (taken)
     return (
-      <p className="lede" style={{ marginTop: 32 }}>
+      <p className="hoja-empty">
         Este lugar ya lo tomó {taken}. Pídele a quien te invitó otro enlace.
       </p>
     );
@@ -35,11 +35,11 @@ export default function JoinForm({ token, taken }: { token: string; taken: strin
   }
 
   return (
-    <form onSubmit={join} className="field" style={{ marginTop: 32 }}>
+    <form onSubmit={join} className="field join">
       <label htmlFor="n">Tu nombre</label>
-      <div style={{ display: "flex", gap: 8 }}>
+      <div className="join-row">
         <input id="n" className="input" value={nombre} onChange={(e) => setNombre(e.target.value)} placeholder="Como te conocen en el barrio" autoComplete="given-name" required />
-        <button className="btn primary" style={{ height: 44 }} disabled={busy}>
+        <button className="btn primary" disabled={busy}>
           Me sumo <Icon name="arrow" />
         </button>
       </div>
