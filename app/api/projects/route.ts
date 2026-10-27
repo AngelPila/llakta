@@ -10,6 +10,7 @@ export async function POST(req: Request) {
   const problema = (body.problema ?? "").trim();
   const nombre = (body.nombre ?? "").trim();
   if (problema.length < 15) return NextResponse.json({ error: "Cuéntanos el problema con un poco más de detalle." }, { status: 400 });
+  if (problema.length > 2000) return NextResponse.json({ error: "Cuéntalo en menos de 2000 caracteres." }, { status: 400 });
   if (!nombre) return NextResponse.json({ error: "Escribe tu nombre." }, { status: 400 });
   const tope = limitar(req, "proyecto", 5) ?? cupoDiario();
   if (tope) return tope;

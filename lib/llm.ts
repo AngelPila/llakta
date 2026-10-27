@@ -33,10 +33,10 @@ const PRESETS: Record<Exclude<ProviderId, "anthropic" | "demo">, { label: string
   },
   deepseek: {
     label: "DeepSeek",
-    baseUrl: "https://api.deepseek.com/v1",
+    baseUrl: "https://api.deepseek.com",
     key: "DEEPSEEK_API_KEY",
-    model: "deepseek-chat",
-    fast: "deepseek-chat",
+    model: "deepseek-v4-pro",
+    fast: "deepseek-flash",
   },
   ollama: {
     label: "Ollama local",
@@ -180,6 +180,8 @@ interface OAMessage {
   content: string | null;
   tool_calls?: { id: string; type: "function"; function: { name: string; arguments: string } }[];
   tool_call_id?: string;
+  // DeepSeek en modo razonamiento: con herramientas hay que devolverlo en cada turno o responde 400.
+  reasoning_content?: string;
 }
 
 function oaConfig() {
@@ -189,6 +191,24 @@ function oaConfig() {
 }
 
 const sleep = (ms: number) => new Promise((r) => setTimeout(r, ms));
+
+// Techo de salida por llamada. Sin él, un modelo que se explaya gasta lo que quiera.
+const maxOut = (fast: boolean) => Number(env(fast ? "LLM_MAX_TOKENS_FAST" : "LLM_MAX_TOKENS")) || (fast ? 3000 : 6000);
+
+// DeepSeek razona por defecto con esfuerzo alto, y ese razonamiento se cobra como
+// salida. Los pasos rápidos no lo necesitan; los demás, en esfuerzo bajo.
+function thinking(fast: boolean): Json {
+  if (provider().id !== "deepseek") return {};
+  return fast ? { thinking: { type: "disabled" } } : { thinking: { type: "enabled" }, reasoning_effort: "low" };
+}
+
+interface Usage {
+  prompt_tokens?: number;
+  completion_tokens?: number;
+  completion_tokens_details?: { reasoning_tokens?: number };
+  prompt_cache_hit_tokens?: number;
+  prompt_tokens_details?: { cached_tokens?: number };
+}
 
 async function oaChat(body: Json): Promise<{ message: OAMessage; finish: string }> {
   const { baseUrl, key } = oaConfig();
@@ -204,7 +224,9 @@ async function oaChat(body: Json): Promise<{ message: OAMessage; finish: string 
       continue;
     }
     if (!res.ok) throw new Error(`El proveedor respondió ${res.status}: ${(await res.text()).slice(0, 300)}`);
-    const data = (await res.json()) as { choices: { message: OAMessage; finish_reason: string }[] };
+    const data = (await res.json()) as { choices: { message: OAMessage; finish_reason: string }[]; usage?: Usage };
+    const u = data.usage;
+    if (u) console.log(`[llm] ${body.model} entrada=${u.prompt_tokens} (caché ${u.prompt_cache_hit_tokens ?? u.prompt_tokens_details?.cached_tokens ?? 0}) salida=${u.completion_tokens}${u.completion_tokens_details?.reasoning_tokens ? ` (razonando ${u.completion_tokens_details.reasoning_tokens})` : ""}`);
     return { message: data.choices[0].message, finish: data.choices[0].finish_reason };
   }
 }
@@ -216,12 +238,14 @@ function extractJSON(text: string): unknown {
   return JSON.parse(start >= 0 ? t.slice(start, end + 1) : t);
 }
 
-async function oaJSON(model: string, system: string, prompt: string, schema: z.ZodType): Promise<unknown> {
+async function oaJSON(model: string, system: string, prompt: string, schema: z.ZodType, fast: boolean): Promise<unknown> {
   const messages: OAMessage[] = [
     { role: "system", content: `${system}\n\nResponde solo con un objeto JSON válido que cumpla este JSON Schema, sin texto alrededor:\n${JSON.stringify(jsonSchema(schema))}` },
     { role: "user", content: prompt },
   ];
-  const { message } = await oaChat({ model, messages, response_format: { type: "json_object" } });
+  const { message, finish } = await oaChat({ model, messages, response_format: { type: "json_object" }, max_tokens: maxOut(fast), ...thinking(fast) });
+  // Cortada a la mitad no sirve, y reintentar costaría lo mismo otra vez.
+  if (finish === "length") throw new Error("La respuesta se cortó por longitud.");
   return extractJSON(message.content ?? "");
 }
 
@@ -248,7 +272,7 @@ export async function generateJSON<T>(req: JSONRequest<T>): Promise<T> {
   for (let attempt = 0; attempt < 2; attempt++) {
     const ask = lastError ? `${prompt}\n\nTu respuesta anterior no cumplió el esquema (${lastError}). Corrígela.` : prompt;
     try {
-      const raw = p.id === "anthropic" ? await claudeJSON(model, req.system, ask, req.schema, req.fast ? "low" : "medium") : await oaJSON(model, req.system, ask, req.schema);
+      const raw = p.id === "anthropic" ? await claudeJSON(model, req.system, ask, req.schema, req.fast ? "low" : "medium") : await oaJSON(model, req.system, ask, req.schema, !!req.fast);
       const parsed = req.schema.safeParse(raw);
       if (parsed.success) return parsed.data;
       lastError = parsed.error.issues.slice(0, 3).map((i) => `${i.path.join(".")}: ${i.message}`).join("; ");
@@ -273,7 +297,7 @@ export interface Turn {
 }
 
 // Conversación con herramientas hasta que el modelo deja de pedirlas.
-export async function toolLoop(system: string, history: Turn[], tools: Tool[], maxSteps = 8): Promise<string> {
+export async function toolLoop(system: string, history: Turn[], tools: Tool[], maxSteps = 5): Promise<string> {
   const p = provider();
   const byName = new Map(tools.map((t) => [t.name, t]));
 
@@ -323,8 +347,8 @@ export async function toolLoop(system: string, history: Turn[], tools: Tool[], m
   const defs = tools.map((t) => ({ type: "function", function: { name: t.name, description: t.description, parameters: jsonSchema(t.schema) } }));
   const messages: OAMessage[] = [{ role: "system", content: system }, ...history.map((h) => ({ role: h.role, content: h.content }) as OAMessage)];
   for (let step = 0; step < maxSteps; step++) {
-    const { message } = await oaChat({ model: p.model, messages, tools: defs, tool_choice: "auto" });
-    messages.push({ role: "assistant", content: message.content ?? "", tool_calls: message.tool_calls });
+    const { message } = await oaChat({ model: p.model, messages, tools: defs, tool_choice: "auto", max_tokens: maxOut(false), ...thinking(false) });
+    messages.push({ role: "assistant", content: message.content ?? "", tool_calls: message.tool_calls, ...(message.reasoning_content ? { reasoning_content: message.reasoning_content } : {}) });
     if (!message.tool_calls?.length) return (message.content ?? "").trim();
     for (const tc of message.tool_calls) {
       let input: unknown = {};

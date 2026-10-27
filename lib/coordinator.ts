@@ -61,12 +61,6 @@ function buildTools(id: string, acciones: string[], autor: string): Tool[] {
 
   const tools = [
     {
-      name: "resumen_avance",
-      description: "Devuelve el estado actual del proyecto: avance, atrasos, roles sin gente y firmas.",
-      schema: z.object({}),
-      run: async () => resumen(getProject(id)!),
-    },
-    {
       name: "crear_tarea",
       description: "Crea una tarea nueva en el tablero.",
       schema: z.object({
@@ -182,7 +176,7 @@ export async function coordinate(id: string, autor: string, texto: string): Prom
 async function realCoordinate(id: string, autor: string, texto: string, acciones: string[]): Promise<string> {
   const p = getProject(id)!;
   const history: Turn[] = [];
-  for (const m of p.chat.slice(-13, -1)) {
+  for (const m of p.chat.slice(-7, -1)) {
     const role = m.de === "persona" ? "user" : "assistant";
     const content = m.de === "persona" ? `${m.autor}: ${m.texto}` : m.texto;
     if (history.length && history[history.length - 1].role === role) history[history.length - 1].content += `\n${content}`;

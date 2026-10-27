@@ -1,4 +1,4 @@
-import { SYSTEM_BASE, contexto } from "./agents";
+import { SYSTEM_BASE, contexto, type Parte } from "./agents";
 import * as demo from "./demo";
 import { generateJSON, provider } from "./llm";
 import {
@@ -60,6 +60,19 @@ async function step<T>(id: string, key: AgentKey, nota: string, work: () => Prom
 
 const isDemo = () => provider().id === "demo";
 
+// Al reintentar, lo que ya salió bien no se vuelve a pedir al modelo.
+function reuse<T>(id: string, keys: AgentKey[], prev: T | undefined): T | undefined {
+  if (prev === undefined) return undefined;
+  updateProject(id, (p) => {
+    for (const k of keys) {
+      const a = p.agentes.find((x) => x.key === k)!;
+      a.estado = "listo";
+      a.notas.push("Reutilizó el resultado anterior");
+    }
+  });
+  return prev;
+}
+
 // Paso 1: la entrevista. Corre apenas se crea el proyecto.
 export async function startInterview(id: string) {
   const p0 = getProject(id)!;
@@ -98,12 +111,13 @@ export async function startInterview(id: string) {
 // Paso 2: con las respuestas, el resto del equipo.
 export async function runPipeline(id: string) {
   const sys = (rol: string) => `${SYSTEM_BASE}\n${rol}`;
-  const ctx = () => contexto(getProject(id)!);
+  const ctx = (...partes: Parte[]) => contexto(getProject(id)!, ...partes);
   const web = provider().webSearch;
+  const prev = getProject(id)!;
 
   try {
     orquestador(id, "Recibí tus respuestas. Empieza la ficha del problema.");
-    const ficha = await step(
+    const ficha = reuse(id, ["entrevistador"], prev.ficha) ?? await step(
       id,
       "entrevistador",
       "Armando la ficha del problema",
@@ -118,6 +132,7 @@ export async function runPipeline(id: string) {
       p.tituloCorto = ficha.titulo || p.tituloCorto;
     });
 
+    if (!prev.investigacion) {
     orquestador(id, web ? "Activé dos investigadores en paralelo, con búsqueda en la web." : "Activé dos investigadores en paralelo.");
     const [causas, precedentes] = await Promise.all([
       step(
@@ -133,7 +148,7 @@ export async function runPipeline(id: string) {
                 webSearch: true,
                 onSearch: (q) => note(id, "causas", `Buscó: ${q}`),
                 system: sys("Eres el investigador de causas. Encuentras las causas de raíz del problema (no los síntomas) y datos que lo respalden, idealmente del país o la ciudad del problema. Si no tienes fuentes verificables, deja 'fuentes' vacío y marca los datos como estimación."),
-                prompt: ctx(),
+                prompt: ctx("ficha"),
               }),
         (_p, o) => `Encontró ${o.causas.length} causas de raíz`,
       ),
@@ -150,7 +165,7 @@ export async function runPipeline(id: string) {
                 webSearch: true,
                 onSearch: (q) => note(id, "precedentes", `Buscó: ${q}`),
                 system: sys("Eres el investigador de precedentes. Identificas qué entidad es responsable de resolver esto y casos parecidos que se resolvieron en otros lugares de Latinoamérica, con lo que hicieron. Si no tienes fuentes verificables, deja 'fuentes' vacío y no inventes nombres propios."),
-                prompt: ctx(),
+                prompt: ctx("ficha"),
               }),
         (_p, o) => `Encontró ${o.precedentes.length} casos y ${o.responsables.length} responsables`,
       ),
@@ -164,9 +179,10 @@ export async function runPipeline(id: string) {
         fuentes: [...causas.fuentes, ...precedentes.fuentes].filter((f) => /^https?:\/\//.test(f.url)),
       };
     });
+    } else reuse(id, ["causas", "precedentes"], prev.investigacion);
 
     orquestador(id, "Con la investigación lista, le paso el caso al equipo de ideas.");
-    const ideas = await step(
+    const ideas = reuse(id, ["ideador"], prev.soluciones && { soluciones: prev.soluciones }) ?? await step(
       id,
       "ideador",
       "Pensando salidas distintas",
@@ -176,7 +192,7 @@ export async function runPipeline(id: string) {
           : generateJSON({
               schema: IdeasSchema,
               system: sys("Eres el ideador. Propones 6 soluciones distintas entre sí, que ataquen las causas encontradas: 2 rápidas y baratas que un grupo de vecinos pueda hacer en días, 2 medias, 2 ambiciosas. Nada genérico: cada una debe nombrar el lugar o la causa que ataca."),
-              prompt: ctx(),
+              prompt: ctx("ficha", "causas", "responsables", "precedentes"),
             }),
       (_p, o) => `Propuso ${o.soluciones.length} soluciones`,
     );
@@ -184,7 +200,7 @@ export async function runPipeline(id: string) {
       p.soluciones = ideas.soluciones.map((s, i) => ({ id: `s${i + 1}`, ...s }));
     });
 
-    const critica = await step(
+    const critica = reuse(id, ["critico"], prev.critica) ?? await step(
       id,
       "critico",
       "Buscando por qué fallaría cada una",
@@ -194,7 +210,7 @@ export async function runPipeline(id: string) {
           : generateJSON({
               schema: CriticaSchema,
               system: sys("Eres el abogado del diablo. Atacas cada solución con honestidad: por qué fallaría, quién se opondría, y la puntúas de 1 a 5 en impacto, costo (5 = barato) y factibilidad para un grupo sin experiencia. Luego eliges la que mejor resiste. Usa los ids s1…s6 tal cual."),
-              prompt: ctx(),
+              prompt: ctx("ficha", "causas", "soluciones"),
             }),
       (p, o) => `Eligió: ${p.soluciones?.find((s) => s.id === o.elegida_id)?.nombre ?? o.elegida_id}`,
     );
@@ -203,7 +219,7 @@ export async function runPipeline(id: string) {
     });
 
     orquestador(id, "Hay solución elegida. La estrategia arma el plan.");
-    const plan = await step(
+    const plan = reuse(id, ["estratega"], prev.plan) ?? await step(
       id,
       "estratega",
       "Armando plan, roles y tareas",
@@ -213,7 +229,7 @@ export async function runPipeline(id: string) {
           : generateJSON({
               schema: PlanSchema,
               system: sys(`Eres la estratega. Conviertes la solución elegida en un plan que un grupo de vecinos pueda cumplir: roles, tareas semana a semana, presupuesto y hitos. El primer rol es "Coordinación" y lo lleva ${getProject(id)!.duenoNombre}. Cada tarea usa uno de los roles, escrito exactamente igual.`),
-              prompt: ctx(),
+              prompt: ctx("ficha", "responsables", "elegida"),
             }),
       (_p, o) => `${o.tareas.length} tareas en ${o.semanas} semanas, ${o.roles.length} roles`,
     );
@@ -232,7 +248,7 @@ export async function runPipeline(id: string) {
         () =>
           isDemo()
             ? demo.demoOficio(getProject(id)!)
-            : generateJSON({ schema: OficioSchema, fast: true, system: sys(`Eres el redactor legal. Escribes el oficio formal a la entidad responsable, firmado por ${getProject(id)!.duenoNombre} en nombre de la coordinación vecinal. Pide algo concreto con plazo y número de trámite.`), prompt: ctx() }),
+            : generateJSON({ schema: OficioSchema, fast: true, system: sys(`Eres el redactor legal. Escribes el oficio formal a la entidad responsable, firmado por ${getProject(id)!.duenoNombre} en nombre de la coordinación vecinal. Pide algo concreto con plazo y número de trámite.`), prompt: ctx("ficha", "responsables", "elegida", "plan") }),
         () => "Oficio listo para firmar",
       ),
       step(
@@ -242,7 +258,7 @@ export async function runPipeline(id: string) {
         () =>
           isDemo()
             ? demo.demoCampana(getProject(id)!)
-            : generateJSON({ schema: CampanaSchema, fast: true, system: sys("Escribes la página pública de la campaña de firmas. Directa, humana, sin exageraciones ni signos de exclamación. La meta de firmas sale del plan."), prompt: ctx() }),
+            : generateJSON({ schema: CampanaSchema, fast: true, system: sys("Escribes la página pública de la campaña de firmas. Directa, humana, sin exageraciones ni signos de exclamación. La meta de firmas sale del plan."), prompt: ctx("ficha", "elegida", "plan") }),
         () => "Página publicada",
       ),
       step(
@@ -252,7 +268,7 @@ export async function runPipeline(id: string) {
         () =>
           isDemo()
             ? demo.demoConvocatoria(getProject(id)!)
-            : generateJSON({ schema: ConvocatoriaSchema, fast: true, system: sys(`Escribes el mensaje con el que ${getProject(id)!.duenoNombre} invita a sus vecinos a sumarse, para mandar por chat. Cercano, corto, con la primera actividad del plan.`), prompt: ctx() }),
+            : generateJSON({ schema: ConvocatoriaSchema, fast: true, system: sys(`Escribes el mensaje con el que ${getProject(id)!.duenoNombre} invita a sus vecinos a sumarse, para mandar por chat. Cercano, corto, con la primera actividad del plan.`), prompt: ctx("ficha", "elegida", "primeras") }),
         () => "Mensaje listo para enviar",
       ),
     ]);

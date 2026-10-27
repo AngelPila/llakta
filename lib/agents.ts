@@ -21,17 +21,41 @@ Escribe en español neutro latinoamericano, con frases cortas y concretas, sin j
 Los presupuestos son realistas en dólares para grupos que casi no tienen dinero.
 No inventes cifras ni instituciones: si algo es una estimación, dilo; si no sabes el nombre exacto de una entidad, nómbrala por su función (por ejemplo, "la dirección de obras públicas del municipio").`;
 
-// Todo lo que el equipo sabe hasta ahora, para darle contexto al siguiente agente.
-export function contexto(p: Project): string {
-  const partes = [`Problema contado por ${p.duenoNombre}: ${p.problema}`];
+// Lo que el siguiente agente necesita saber. Cada agente pide solo las partes que
+// usa: mandar todo a todos multiplica los tokens de entrada en cada llamada.
+export type Parte = "ficha" | "causas" | "responsables" | "precedentes" | "soluciones" | "critica" | "elegida" | "plan" | "primeras";
+
+export function contexto(p: Project, ...partes: Parte[]): string {
+  const out = [`Problema contado por ${p.duenoNombre}: ${p.problema}`];
   const resp = p.preguntas
     .map((q) => (p.respuestas[q.id] ? `- ${q.pregunta} → ${p.respuestas[q.id]}` : ""))
     .filter(Boolean);
-  if (resp.length) partes.push(`Respuestas a la entrevista:\n${resp.join("\n")}`);
-  if (p.ficha) partes.push(`Ficha del problema: ${JSON.stringify(p.ficha)}`);
-  if (p.investigacion) partes.push(`Investigación: ${JSON.stringify(p.investigacion)}`);
-  if (p.soluciones) partes.push(`Soluciones propuestas: ${JSON.stringify(p.soluciones)}`);
-  if (p.critica) partes.push(`Evaluación crítica: ${JSON.stringify(p.critica)}`);
-  if (p.plan) partes.push(`Plan: ${JSON.stringify(p.plan)}`);
-  return partes.join("\n\n");
+  // La ficha ya resume las respuestas; sin ficha, van tal cual.
+  if (resp.length && !(p.ficha && partes.includes("ficha"))) out.push(`Respuestas a la entrevista:\n${resp.join("\n")}`);
+  const inv = p.investigacion;
+  const elegida = p.soluciones?.find((s) => s.id === p.critica?.elegida_id);
+  for (const parte of partes) {
+    if (parte === "ficha" && p.ficha) {
+      const f = p.ficha;
+      out.push(`Ficha: ${f.enunciado} Afecta a: ${f.afectados}. Lugar: ${f.lugar}. Desde: ${f.desde}. Intentos: ${f.intentos}. Supuestos: ${f.supuestos.join("; ")}.`);
+    }
+    if (parte === "causas" && inv) {
+      out.push(`Causas de raíz:\n${inv.causas.map((c) => `- ${c.causa} (${c.evidencia})`).join("\n")}`);
+      if (inv.datos.length) out.push(`Datos:\n${inv.datos.map((d) => `- ${d.dato} [${d.fuente}]`).join("\n")}`);
+    }
+    if (parte === "responsables" && inv?.responsables.length) out.push(`Responsables:\n${inv.responsables.map((r) => `- ${r.entidad}: ${r.que_le_toca}`).join("\n")}`);
+    if (parte === "precedentes" && inv?.precedentes.length) out.push(`Casos parecidos:\n${inv.precedentes.map((c) => `- ${c.lugar}: ${c.que_hicieron} → ${c.resultado}`).join("\n")}`);
+    if (parte === "soluciones" && p.soluciones) out.push(`Soluciones propuestas:\n${p.soluciones.map((s) => `- ${s.id} [${s.escala}] ${s.nombre}: ${s.descripcion} (~${s.costo_usd} USD, ${s.semanas} semanas)`).join("\n")}`);
+    if (parte === "critica" && p.critica) out.push(`Evaluación crítica: ${JSON.stringify(p.critica)}`);
+    if (parte === "elegida" && elegida) {
+      const ev = p.critica!.evaluaciones.find((e) => e.id === elegida.id);
+      out.push(`Solución elegida: ${elegida.nombre}. ${elegida.descripcion} (~${elegida.costo_usd} USD, ${elegida.semanas} semanas). Por qué: ${p.critica!.por_que}${ev ? ` Riesgo: ${ev.riesgo} Se opondría: ${ev.quien_se_opone}.` : ""}`);
+    }
+    if (parte === "plan" && p.plan) {
+      const pl = p.plan;
+      out.push(`Plan: ${pl.objetivo}. Meta: ${pl.meta_medible}. ${pl.semanas} semanas. Presupuesto: ${pl.presupuesto.map((x) => `${x.item} ${x.usd} USD`).join(", ")}. Hitos: ${pl.hitos.map((h) => `semana ${h.semana}: ${h.hito}`).join("; ")}.`);
+    }
+    if (parte === "primeras" && p.plan) out.push(`Primeras tareas:\n${p.plan.tareas.filter((t) => t.semana <= 1).map((t) => `- ${t.titulo} (${t.rol})`).join("\n")}`);
+  }
+  return out.join("\n\n");
 }

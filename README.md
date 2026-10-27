@@ -37,7 +37,10 @@ servidor entero `LLAKTA_MAX_PROYECTOS_DIA` al día, para no agotar el saldo de l
 | Claude | de pago | `ANTHROPIC_API_KEY` | Único con búsqueda web real en la investigación. |
 
 Se detecta solo según la clave que exista; `LLAKTA_PROVIDER` lo fuerza. `LLM_MODEL` y
-`LLM_FAST_MODEL` cambian los modelos.
+`LLM_FAST_MODEL` cambian los modelos, y `LLM_MAX_TOKENS` / `LLM_MAX_TOKENS_FAST` limitan la salida
+de cada llamada. Con DeepSeek, la etapa principal usa `deepseek-v4-pro` con razonamiento en
+esfuerzo bajo, y el resto `deepseek-flash` sin razonamiento (DeepSeek lo trae activado y en alto por defecto);
+el consumo de cada llamada queda en el log del servidor (`[llm] … entrada=… salida=…`).
 
 ## Cómo está hecho
 
@@ -45,7 +48,7 @@ Se detecta solo según la clave que exista; `LLAKTA_PROVIDER` lo fuerza. `LLM_MO
   abogado del diablo → estrategia → oficio ∥ campaña ∥ convocatoria → tablero.
 - `lib/coordinator.ts`: agente con herramientas que modifican el proyecto
   (`crear_tarea`, `actualizar_tarea`, `marcar_disponibilidad`, `invitar_persona`,
-  `redactar_documento`, `resumen_avance`).
+  `redactar_documento`). El estado y el resumen de avance van en cada mensaje.
 - `lib/llm.ts`: capa de proveedores (Claude con el SDK oficial; Gemini, Groq y Ollama por su
   API compatible con OpenAI). Toda salida se valida con Zod.
 - Tiempo real por Server-Sent Events; datos en `data/db.json`.
