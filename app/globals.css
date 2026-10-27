@@ -745,7 +745,7 @@ table.ideas details.fold > .sub { margin-top: 4px; }
 html:has(.home) { scrollbar-color: var(--paramo) var(--neblina); }
 .home ::selection { background: var(--paja); color: var(--tinta); }
 
-.home-bar { display: flex; align-items: center; justify-content: space-between; gap: 16px; height: 60px; padding: 0 40px; background: var(--barro); color: #fff; --mark: var(--paja); --mark-hole: var(--barro); }
+.home-bar { display: flex; align-items: center; justify-content: space-between; gap: 16px; height: 60px; padding: 0 40px; background: var(--barro); color: #fff; --mark: var(--paja); }
 .home-brand { display: flex; align-items: center; gap: 10px; font: 400 24px/1 var(--rotulo); letter-spacing: 0.01em; }
 .home-nav { display: flex; align-items: center; gap: 4px; }
 .home-nav a { display: inline-flex; align-items: center; gap: 8px; height: 40px; padding: 0 14px; border-radius: 8px; font-size: 15px; font-weight: 500; color: #f6e3dc; transition: background var(--t-quick) var(--ease), color var(--t-quick) var(--ease); }
@@ -948,7 +948,7 @@ html:has(.app) { background: var(--neblina); scrollbar-color: var(--paramo) var(
 :is(.app, .home) input, :is(.app, .home) textarea { caret-color: var(--paramo); }
 
 /* Barra lateral */
-:is(.app, .home) .sidebar { background: var(--paramo); color: #fff; border: 0; --mark: var(--paja); --mark-hole: var(--paramo); }
+:is(.app, .home) .sidebar { background: var(--paramo); color: #fff; border: 0; --mark: var(--paja); }
 :is(.app, .home) .brand { font: 400 22px/1 var(--rotulo); }
 :is(.app, .home) .scope { background: none; border: 1.5px solid rgba(255, 255, 255, 0.28); border-radius: 10px; }
 :is(.app, .home) .scope b { color: #fff; font-weight: 600; }
@@ -970,7 +970,7 @@ html:has(.app) { background: var(--neblina); scrollbar-color: var(--paramo) var(
 
 /* Teléfono: barra de barro arriba, menú como hoja verde. */
 @media (max-width: 900px) {
-  :is(.app, .home) .topbar { background: var(--barro); color: #fff; border: 0; --mark: var(--paja); --mark-hole: var(--barro); }
+  :is(.app, .home) .topbar { background: var(--barro); color: #fff; border: 0; --mark: var(--paja); }
   :is(.app, .home) .topbar .name { font: 400 18px/1 var(--rotulo); }
   :is(.app, .home) .topbar button { color: #fff; }
 }
@@ -1020,7 +1020,7 @@ html:has(.app) { background: var(--neblina); scrollbar-color: var(--paramo) var(
 :is(.app, .home) .bar.hecha { background: #e6ebe7; }
 
 /* El coordinador */
-:is(.app, .home) .composer { border: 2px solid var(--tinta); border-radius: 18px; box-shadow: 0 12px 28px -12px rgba(19, 35, 26, 0.35); }
+:is(.app, .home) .composer { border: 2px solid var(--tinta); border-radius: 18px; box-shadow: 0 12px 28px -12px rgba(19, 35, 26, 0.35); --mark: var(--paramo); }
 :is(.app, .home) .msg .acts div { color: var(--paramo); }
 :is(.app, .home) .suggest button { border-color: var(--border); background: #fff; color: var(--tinta-muted); }
 :is(.app, .home) .suggest button:hover { border-color: var(--tinta); color: var(--tinta); }

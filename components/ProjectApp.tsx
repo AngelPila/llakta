@@ -139,7 +139,7 @@ export default function ProjectApp({ initial, webSearch }: { initial: Project; w
     <div className="app">
       <aside className={`sidebar${menu ? " sheet" : ""}`}>
         <Link href="/" className="brand">
-          <Mark /> Llakta
+          <Mark size={24} /> Llakta
         </Link>
         <div className="scope">
           <b title={titulo}>{titulo}</b>

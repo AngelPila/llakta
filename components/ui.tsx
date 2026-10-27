@@ -3,9 +3,8 @@ import type { Member } from "@/lib/types";
 // La marca: una chakana (la cruz escalonada andina) dibujada en el acento.
 export function Mark({ size = 20 }: { size?: number }) {
   return (
-    <svg width={size} height={size} viewBox="0 0 20 20" aria-hidden="true">
-      <path d="M7 1h6v3h3v3h3v6h-3v3h-3v3H7v-3H4v-3H1V7h3V4h3z" style={{ fill: "var(--mark, #1b6e66)" }} />
-      <rect x="8" y="8" width="4" height="4" style={{ fill: "var(--mark-hole, #fff)" }} />
+    <svg width={size} height={size} viewBox="0 0 48 48" aria-hidden="true">
+      <path fillRule="evenodd" d="M16 1H32V9H39V16H47V32H39V39H32V47H16V39H9V32H1V16H9V9H16Z M24 14.5L33.5 23V33.5H14.5V23Z" style={{ fill: "var(--mark, #e0a92e)" }} />
     </svg>
   );
 }

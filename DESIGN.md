@@ -243,7 +243,7 @@ Las retículas de cifras y franjas usan el fondo de tinta que asoma por un hueco
 - **Error:** texto de error rojo bajo el campo.
 
 ### Navigation
-- **Barra de barro:** marca (logotipo pixelado en paja con hueco de barro) y "Llakta" en letra de rótulo 24px; enlaces en Rubik 500 15px color crema, hover con velo blanco al 12%. Foco con contorno de paja.
+- **Barra de barro:** marca (chakana escalonada en paja con una casa calada al centro) y "Llakta" en letra de rótulo 24px; enlaces en Rubik 500 15px color crema, hover con velo blanco al 12%. Foco con contorno de paja.
 - **Riel del proyecto:** campo verde; el proyecto en un recuadro con borde blanco translúcido; ítems en sobre-páramo con iconos SVG; la sección actual es una placa de paja (8px) con texto tinta que viaja entre ítems; los conteos en paja. Una tarjeta blanca con borde de tinta al pie para la página de firmas.
 
 ### Camino de agentes (signature)
@@ -259,7 +259,7 @@ Una casilla por vecino; cada firma pinta su casilla de paja. La misma idea vuelv
 - **Do** poner todo contenido sobre hojas blancas con borde de tinta de 2px y 14px de radio.
 - **Do** dejar una sola acción dorada de paja por vista, con texto tinta y dentro del primer vistazo.
 - **Do** enmarcar las fotos reales con 8px de blanco y contorno de tinta, con su crédito debajo.
-- **Do** dibujar marcas e iconos en SVG o CSS (rombo de hito, logotipo pixelado, círculos numerados).
+- **Do** dibujar marcas e iconos en SVG o CSS (rombo de hito, chakana con casa, círculos numerados).
 
 ### Don't:
 - **Don't** usar degradados, vidrio, ni sombras difusas en tarjetas u hojas; la única sombra de caja es la del compositor flotante.

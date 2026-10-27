@@ -6,7 +6,7 @@ export default function Barra({ proyectos }: { proyectos?: boolean }) {
   return (
     <header className="home-bar">
       <Link href="/" className="home-brand">
-        <Mark size={22} /> Llakta
+        <Mark size={30} /> Llakta
       </Link>
       <nav className="home-nav">
         {proyectos && <a href="#proyectos">Tus proyectos</a>}
