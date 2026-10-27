@@ -35,7 +35,7 @@ const PRESETS: Record<Exclude<ProviderId, "anthropic" | "demo">, { label: string
     label: "DeepSeek",
     baseUrl: "https://api.deepseek.com",
     key: "DEEPSEEK_API_KEY",
-    model: "deepseek-v4-pro",
+    model: "deepseek-flash",
     fast: "deepseek-flash",
   },
   ollama: {
@@ -196,10 +196,9 @@ const sleep = (ms: number) => new Promise((r) => setTimeout(r, ms));
 const maxOut = (fast: boolean) => Number(env(fast ? "LLM_MAX_TOKENS_FAST" : "LLM_MAX_TOKENS")) || (fast ? 3000 : 6000);
 
 // DeepSeek razona por defecto con esfuerzo alto, y ese razonamiento se cobra como
-// salida. Los pasos rápidos no lo necesitan; los demás, en esfuerzo bajo.
-function thinking(fast: boolean): Json {
-  if (provider().id !== "deepseek") return {};
-  return fast ? { thinking: { type: "disabled" } } : { thinking: { type: "enabled" }, reasoning_effort: "low" };
+// salida: era casi todo el costo de una corrida. Apagado en todos los pasos.
+function thinking(): Json {
+  return provider().id === "deepseek" ? { thinking: { type: "disabled" } } : {};
 }
 
 interface Usage {
@@ -243,7 +242,7 @@ async function oaJSON(model: string, system: string, prompt: string, schema: z.Z
     { role: "system", content: `${system}\n\nResponde solo con un objeto JSON válido que cumpla este JSON Schema, sin texto alrededor:\n${JSON.stringify(jsonSchema(schema))}` },
     { role: "user", content: prompt },
   ];
-  const { message, finish } = await oaChat({ model, messages, response_format: { type: "json_object" }, max_tokens: maxOut(fast), ...thinking(fast) });
+  const { message, finish } = await oaChat({ model, messages, response_format: { type: "json_object" }, max_tokens: maxOut(fast), ...thinking() });
   // Cortada a la mitad no sirve, y reintentar costaría lo mismo otra vez.
   if (finish === "length") throw new Error("La respuesta se cortó por longitud.");
   return extractJSON(message.content ?? "");
@@ -347,7 +346,7 @@ export async function toolLoop(system: string, history: Turn[], tools: Tool[], m
   const defs = tools.map((t) => ({ type: "function", function: { name: t.name, description: t.description, parameters: jsonSchema(t.schema) } }));
   const messages: OAMessage[] = [{ role: "system", content: system }, ...history.map((h) => ({ role: h.role, content: h.content }) as OAMessage)];
   for (let step = 0; step < maxSteps; step++) {
-    const { message } = await oaChat({ model: p.model, messages, tools: defs, tool_choice: "auto", max_tokens: maxOut(false), ...thinking(false) });
+    const { message } = await oaChat({ model: p.model, messages, tools: defs, tool_choice: "auto", max_tokens: maxOut(false), ...thinking() });
     messages.push({ role: "assistant", content: message.content ?? "", tool_calls: message.tool_calls, ...(message.reasoning_content ? { reasoning_content: message.reasoning_content } : {}) });
     if (!message.tool_calls?.length) return (message.content ?? "").trim();
     for (const tc of message.tool_calls) {

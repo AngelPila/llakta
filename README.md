@@ -38,8 +38,8 @@ servidor entero `LLAKTA_MAX_PROYECTOS_DIA` al día, para no agotar el saldo de l
 
 Se detecta solo según la clave que exista; `LLAKTA_PROVIDER` lo fuerza. `LLM_MODEL` y
 `LLM_FAST_MODEL` cambian los modelos, y `LLM_MAX_TOKENS` / `LLM_MAX_TOKENS_FAST` limitan la salida
-de cada llamada. Con DeepSeek, la etapa principal usa `deepseek-v4-pro` con razonamiento en
-esfuerzo bajo, y el resto `deepseek-flash` sin razonamiento (DeepSeek lo trae activado y en alto por defecto);
+de cada llamada. Con DeepSeek, todo usa `deepseek-flash` sin razonamiento (DeepSeek lo trae activado y en alto
+por defecto, y era casi todo el costo);
 el consumo de cada llamada queda en el log del servidor (`[llm] … entrada=… salida=…`).
 
 ## Cómo está hecho
