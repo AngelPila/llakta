@@ -1,0 +1,232 @@
+[
+  {
+    "key": "home",
+    "src": "/fotos/home.jpg",
+    "titulo": "Minga de limpieza en Piedras",
+    "autor": "Alcaldía de Joseph Cueva 2009-2014",
+    "licencia": "CC BY-SA 2.0",
+    "licenciaUrl": "https://creativecommons.org/licenses/by-sa/2.0/",
+    "fuente": "https://www.flickr.com/photos/45783535@N05/4606671066",
+    "credito": "\"Minga de limpieza en Piedras\" by Alcaldía de Joseph Cueva 2009-2014, CC BY-SA 2.0, via Flickr",
+    "palabras": [
+      "minga",
+      "comunidad",
+      "vecinos",
+      "juntos",
+      "trabajo",
+      "limpieza",
+      "sembrar",
+      "barrio"
+    ],
+    "w": 1024,
+    "h": 680
+  },
+  {
+    "key": "puente",
+    "src": "/fotos/puente.jpg",
+    "titulo": "Puente peatonal en Chetilla",
+    "autor": "John PC",
+    "licencia": "CC BY-SA 4.0",
+    "licenciaUrl": "https://creativecommons.org/licenses/by-sa/4.0/",
+    "fuente": "https://commons.wikimedia.org/w/index.php?curid=56862716",
+    "credito": "\"Puente peatonal en Chetilla\" by John PC, CC BY-SA 4.0, via Wikimedia Commons",
+    "palabras": [
+      "puente",
+      "quebrada",
+      "cruzar",
+      "río",
+      "pasarela",
+      "peatonal"
+    ],
+    "w": 1600,
+    "h": 1200
+  },
+  {
+    "key": "agua",
+    "src": "/fotos/agua.jpg",
+    "titulo": "Reservorio de agua de la comunidad Campesina Cesar Vallejo de Palo Blanco",
+    "autor": "May21tati",
+    "licencia": "CC BY-SA 4.0",
+    "licenciaUrl": "https://creativecommons.org/licenses/by-sa/4.0/",
+    "fuente": "https://commons.wikimedia.org/w/index.php?curid=191875349",
+    "credito": "\"Reservorio de agua de la comunidad Campesina Cesar Vallejo de Palo Blanco\" by May21tati, CC BY-SA 4.0, via Wikimedia Commons",
+    "palabras": [
+      "agua",
+      "tanque",
+      "reservorio",
+      "potable",
+      "grifo",
+      "llave",
+      "baño",
+      "lavabo",
+      "tubería"
+    ],
+    "w": 1280,
+    "h": 960
+  },
+  {
+    "key": "basura",
+    "src": "/fotos/basura.jpg",
+    "titulo": "Street art and waste on Coronel Talbot and Gran Colombia, Cuenca",
+    "autor": "Martín Vasco",
+    "licencia": "CC BY-SA 4.0",
+    "licenciaUrl": "https://creativecommons.org/licenses/by-sa/4.0",
+    "fuente": "https://commons.wikimedia.org/wiki/File:Street_art_and_waste_on_Coronel_Talbot_and_Gran_Colombia,_Cuenca.jpg",
+    "credito": "\"Street art and waste on Coronel Talbot and Gran Colombia, Cuenca\" by Martín Vasco, CC BY-SA 4.0, via Wikimedia Commons",
+    "palabras": [
+      "basura",
+      "desechos",
+      "recolección",
+      "reciclaje",
+      "fundas",
+      "limpieza",
+      "contenedor"
+    ],
+    "w": 1600,
+    "h": 1067
+  },
+  {
+    "key": "calle",
+    "src": "/fotos/calle.jpg",
+    "titulo": "Zumbahua centro",
+    "autor": "Jan Pesula (Sapfan)",
+    "licencia": "public domain",
+    "licenciaUrl": "https://creativecommons.org/publicdomain/mark/1.0/",
+    "fuente": "https://commons.wikimedia.org/wiki/File:Zumbahua_centro.jpg",
+    "credito": "\"Zumbahua centro\" by Jan Pesula (Sapfan), public domain, via Wikimedia Commons",
+    "palabras": [
+      "calle",
+      "camino",
+      "tierra",
+      "lodo",
+      "asfalto",
+      "bache",
+      "vía",
+      "lastre",
+      "pavimento"
+    ],
+    "w": 1024,
+    "h": 768
+  },
+  {
+    "key": "luz",
+    "src": "/fotos/luz.jpg",
+    "titulo": "El ojo de la calle - panoramio",
+    "autor": "Cristian Paliz",
+    "licencia": "CC BY-SA 3.0",
+    "licenciaUrl": "https://creativecommons.org/licenses/by-sa/3.0",
+    "fuente": "https://commons.wikimedia.org/wiki/File:El_ojo_de_la_calle_-_panoramio.jpg",
+    "credito": "\"El ojo de la calle - panoramio\" by Cristian Paliz, CC BY-SA 3.0, via Wikimedia Commons",
+    "palabras": [
+      "luz",
+      "alumbrado",
+      "lámpara",
+      "poste",
+      "oscuro",
+      "noche",
+      "foco",
+      "inseguridad"
+    ],
+    "w": 1600,
+    "h": 1200
+  },
+  {
+    "key": "escuela",
+    "src": "/fotos/escuela.jpg",
+    "titulo": "Escuela Simon Bolivar Otavalo",
+    "autor": "Sylvain2803",
+    "licencia": "CC BY-SA 3.0",
+    "licenciaUrl": "https://creativecommons.org/licenses/by-sa/3.0/",
+    "fuente": "https://commons.wikimedia.org/w/index.php?curid=11324297",
+    "credito": "\"Escuela Simon Bolivar Otavalo\" by Sylvain2803, CC BY-SA 3.0, via Wikimedia Commons",
+    "palabras": [
+      "escuela",
+      "colegio",
+      "niños",
+      "estudiantes",
+      "aula",
+      "educación",
+      "unidad educativa"
+    ],
+    "w": 1600,
+    "h": 1200
+  },
+  {
+    "key": "parque",
+    "src": "/fotos/parque.jpg",
+    "titulo": "1175359075 Riobamba Parque",
+    "autor": "Julia Rubinic",
+    "licencia": "CC BY 2.0",
+    "licenciaUrl": "https://creativecommons.org/licenses/by/2.0",
+    "fuente": "https://commons.wikimedia.org/wiki/File:1175359075_Riobamba_Parque.jpg",
+    "credito": "\"1175359075 Riobamba Parque\" by Julia Rubinic, CC BY 2.0, via Wikimedia Commons",
+    "palabras": [
+      "parque",
+      "plaza",
+      "áreas verdes",
+      "juegos",
+      "bancas",
+      "jardín",
+      "árboles"
+    ],
+    "w": 1280,
+    "h": 960
+  },
+  {
+    "key": "barrio1",
+    "src": "/fotos/barrio1.jpg",
+    "titulo": "Calle Agoyan, Quito, pic.a1694",
+    "autor": "David Adam Kess",
+    "licencia": "CC BY-SA 4.0",
+    "licenciaUrl": "https://creativecommons.org/licenses/by-sa/4.0",
+    "fuente": "https://commons.wikimedia.org/wiki/File:Calle_Agoyan,_Quito,_pic.a1694.jpg",
+    "credito": "\"Calle Agoyan, Quito, pic.a1694\" by David Adam Kess, CC BY-SA 4.0, via Wikimedia Commons",
+    "palabras": [
+      "barrio",
+      "quito",
+      "ladera",
+      "casas",
+      "ciudad"
+    ],
+    "w": 1600,
+    "h": 1200
+  },
+  {
+    "key": "barrio2",
+    "src": "/fotos/barrio2.jpg",
+    "titulo": "Otavalo Ecuador 1684",
+    "autor": "Arabsalam",
+    "licencia": "CC BY 4.0",
+    "licenciaUrl": "https://creativecommons.org/licenses/by/4.0",
+    "fuente": "https://commons.wikimedia.org/wiki/File:Otavalo_Ecuador_1684.jpg",
+    "credito": "\"Otavalo Ecuador 1684\" by Arabsalam, CC BY 4.0, via Wikimedia Commons",
+    "palabras": [
+      "mercado",
+      "feria",
+      "otavalo",
+      "comercio",
+      "barrio"
+    ],
+    "w": 1600,
+    "h": 1198
+  },
+  {
+    "key": "barrio3",
+    "src": "/fotos/barrio3.jpg",
+    "titulo": "Licto Calle Bolívar seen from Calle Riobamba to the west",
+    "autor": "Ymblanter",
+    "licencia": "CC BY-SA 4.0",
+    "licenciaUrl": "https://creativecommons.org/licenses/by-sa/4.0/",
+    "fuente": "https://commons.wikimedia.org/w/index.php?curid=154067271",
+    "credito": "\"Licto Calle Bolívar seen from Calle Riobamba to the west\" by Ymblanter, CC BY-SA 4.0, via Wikimedia Commons",
+    "palabras": [
+      "calle",
+      "barrio",
+      "pueblo",
+      "chimborazo",
+      "vereda"
+    ],
+    "w": 1600,
+    "h": 1067
+  }
+]

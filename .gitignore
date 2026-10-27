@@ -1,0 +1,10 @@
+node_modules
+.next
+data/*.json
+.env
+.taste-skill
+next-env.d.ts
+data/
+.playwright-mcp
+tsconfig.tsbuildinfo
+assets/

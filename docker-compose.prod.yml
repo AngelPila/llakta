@@ -1,0 +1,15 @@
+# Producción en el VPS: docker compose -f docker-compose.prod.yml up -d --build
+services:
+  app:
+    build: .
+    restart: unless-stopped
+    env_file:
+      - path: .env
+        required: false
+    environment:
+      # Tope de proyectos nuevos por día en todo el servidor (cuida el saldo del proveedor de IA)
+      LLAKTA_MAX_PROYECTOS_DIA: ${LLAKTA_MAX_PROYECTOS_DIA:-60}
+    ports:
+      - "${PORT:-3210}:3000"
+    volumes:
+      - ./data:/app/data
