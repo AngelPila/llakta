@@ -689,3 +689,21 @@ table.ideas tr.win .pill { animation: pop var(--t-std) var(--ease-settle) 620ms 
   .rowcard.member .main .t, .rowcard.member .main .sub { white-space: normal; }
   .rowcard.member .end { flex-basis: 100%; padding-left: 52px; justify-content: flex-start; }
 }
+
+/* Fases: los agentes agrupados en el orden en que trabajan, unidos por una línea que se llena. */
+.fases { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; }
+.fase { position: relative; display: grid; grid-template-columns: 28px 1fr; column-gap: 12px; padding-bottom: 18px; }
+.fase:last-child { padding-bottom: 0; }
+.fase::before { content: ""; position: absolute; left: 13px; top: 30px; bottom: 2px; width: 2px; border-radius: 1px; background: var(--rule); }
+.fase:last-child::before { display: none; }
+.fase.hecha::before { background: var(--accent); }
+.fase-n { width: 28px; height: 28px; border-radius: 50%; display: grid; place-items: center; font-size: 13px; font-weight: 600; background: var(--surface); border: 1.5px solid var(--control); color: var(--muted); transition: background var(--t-std) var(--ease), border-color var(--t-std) var(--ease), color var(--t-std) var(--ease); }
+.fase.ahora .fase-n { border-color: var(--accent); background: var(--accent-soft); color: var(--accent-ink, var(--accent)); box-shadow: 0 0 0 4px var(--accent-soft); }
+.fase.hecha .fase-n { border-color: var(--accent); background: var(--accent); color: #fff; }
+.fase-body { min-width: 0; }
+.fase-head { display: flex; align-items: baseline; gap: 8px; min-height: 28px; padding-top: 4px; margin-bottom: 6px; }
+.fase-head b { font-size: 15px; font-weight: 600; }
+.fase-st { margin-left: auto; font-size: 12px; color: var(--muted); }
+.fase.ahora .fase-st { color: var(--accent); font-weight: 600; }
+.fase.despues .fase-head b { color: var(--muted); }
+.fase-agentes { font-size: 12px; line-height: 18px; color: var(--muted); }

@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import type { Project } from "@/lib/types";
-import { AgentGlyph } from "./AgentsRoom";
+import { AgentGlyph, Fases } from "./AgentsRoom";
 import { Icon } from "./ui";
 
 export default function Interview({ p }: { p: Project }) {
@@ -59,10 +59,10 @@ export default function Interview({ p }: { p: Project }) {
         </form>
         <section className="panel s5" aria-labelledby="espera-h">
           <div className="panel-head">
-            <h2 id="espera-h">Quién trabaja después</h2>
+            <h2 id="espera-h">Cómo sigue</h2>
           </div>
-          <ol className="rows">
-            {p.agentes.map((a) => (
+          <Fases agentes={p.agentes}>
+            {(a) => (
               <li key={a.key} className="rowcard" style={{ minHeight: 52 }}>
                 <AgentGlyph estado={a.key === "entrevistador" && !listo ? "trabajando" : a.estado} />
                 <div className="main">
@@ -70,8 +70,8 @@ export default function Interview({ p }: { p: Project }) {
                   <div className="sub">{a.notas[a.notas.length - 1] ?? a.rol}</div>
                 </div>
               </li>
-            ))}
-          </ol>
+            )}
+          </Fases>
         </section>
       </div>
     </div>

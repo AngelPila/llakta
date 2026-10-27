@@ -1,8 +1,9 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import type { AgentState, Project } from "@/lib/types";
-import { duracion, hora } from "@/lib/view";
+import { FASES } from "@/lib/agents";
+import type { AgentRun, AgentState, Project } from "@/lib/types";
+import { duracion } from "@/lib/view";
 import { Icon } from "./ui";
 
 export function AgentGlyph({ estado }: { estado: AgentState }) {
@@ -15,6 +16,40 @@ export function AgentGlyph({ estado }: { estado: AgentState }) {
       )}
       {estado === "error" && "!"}
     </span>
+  );
+}
+
+function faseActual(agentes: AgentRun[]) {
+  const i = FASES.findIndex((f) => f.agentes.some((k) => agentes.find((a) => a.key === k)?.estado !== "listo"));
+  return i === -1 ? FASES.length : i;
+}
+
+export function Fases({ agentes, children }: { agentes: AgentRun[]; children: (a: AgentRun) => React.ReactNode }) {
+  const actual = faseActual(agentes);
+  return (
+    <ol className="fases">
+      {FASES.map((f, i) => {
+        const estado = i < actual ? "hecha" : i === actual ? "ahora" : "despues";
+        return (
+          <li key={f.nombre} className={`fase ${estado}`} aria-current={estado === "ahora" ? "step" : undefined}>
+            <span className="fase-n num" aria-hidden="true">
+              {i + 1}
+            </span>
+            <div className="fase-body">
+              <div className="fase-head">
+                <b>{f.nombre}</b>
+                {estado === "ahora" && <span className="fase-st">Ahora</span>}
+              </div>
+              {estado === "ahora" ? (
+                <ol className="rows">{f.agentes.map((k) => agentes.find((a) => a.key === k)).filter((a): a is AgentRun => !!a).map(children)}</ol>
+              ) : (
+                <p className="fase-agentes">{f.agentes.map((k) => agentes.find((a) => a.key === k)?.nombre).join(" · ")}</p>
+              )}
+            </div>
+          </li>
+        );
+      })}
+    </ol>
   );
 }
 
@@ -40,8 +75,6 @@ export function Score({ n, accent, w = 0 }: { n: number; accent?: boolean; w?: n
   );
 }
 
-const ESCALA = { rapida: "Rápida", media: "Media", ambiciosa: "Ambiciosa" } as const;
-
 export default function AgentsRoom({ p, webSearch, onOpen }: { p: Project; webSearch: boolean; onOpen: () => void }) {
   const trabajando = p.status === "trabajando";
   const now = useNow(trabajando);
@@ -49,7 +82,6 @@ export default function AgentsRoom({ p, webSearch, onOpen }: { p: Project; webSe
   const inicio = Math.min(...p.agentes.map((a) => a.inicio ?? Infinity));
   const fin = Math.max(...p.agentes.map((a) => a.fin ?? 0));
   const total = Number.isFinite(inicio) ? (trabajando ? now : fin) - inicio : 0;
-  const elegida = p.soluciones?.find((s) => s.id === p.critica?.elegida_id);
 
   async function retry() {
     await fetch(`/api/projects/${p.id}/retry`, { method: "POST" });
@@ -92,12 +124,9 @@ export default function AgentsRoom({ p, webSearch, onOpen }: { p: Project; webSe
           <section className="panel" aria-labelledby="ag-h">
             <div className="panel-head">
               <h2 id="ag-h">El equipo</h2>
-              <span className="chip num">{p.agentes.filter((a) => a.estado === "trabajando").length} trabajando ahora</span>
             </div>
-            <ol className="rows">
-              {p.agentes.map((a) => {
-                const t = a.inicio ? (a.fin ?? now) - a.inicio : 0;
-                return (
+            <Fases agentes={p.agentes}>
+              {(a) => (
                   <li key={a.key} className={`rowcard agent ${a.estado}`}>
                     <AgentGlyph estado={a.estado} />
                     <div className="main">
@@ -106,30 +135,10 @@ export default function AgentsRoom({ p, webSearch, onOpen }: { p: Project; webSe
                         <span className="note">{a.notas[a.notas.length - 1] ?? a.rol}</span>
                       </div>
                     </div>
-                    <span className="end num muted" style={{ fontSize: 12 }}>
-                      {a.inicio ? duracion(t) : "—"}
-                    </span>
                     {a.estado === "trabajando" && <span className="sweep" aria-hidden="true" />}
                   </li>
-                );
-              })}
-            </ol>
-          </section>
-          <section className="panel" aria-labelledby="bit-h">
-            <div className="panel-head">
-              <h2 id="bit-h">Bitácora del orquestador</h2>
-            </div>
-            <ol className="feed">
-              {p.log
-                .filter((e) => e.autor === "Orquestador")
-                .slice(-6)
-                .reverse()
-                .map((e) => (
-                  <li key={e.en + e.texto} className="rise">
-                    <span className="num muted">{hora(e.en)}</span> {e.texto}
-                  </li>
-                ))}
-            </ol>
+              )}
+            </Fases>
           </section>
         </div>
 
@@ -150,19 +159,8 @@ export default function AgentsRoom({ p, webSearch, onOpen }: { p: Project; webSe
             <article className="panel rise">
               <div className="panel-head">
                 <h2>Ficha del problema</h2>
-                <span className="end">Entrevista</span>
               </div>
               <p className="statement">{p.ficha.enunciado}</p>
-              <dl className="kv">
-                <dt>A quién afecta</dt>
-                <dd>{p.ficha.afectados}</dd>
-                <dt>Dónde</dt>
-                <dd className={p.ficha.lugar ? undefined : "muted"}>{p.ficha.lugar || "Sin dato"}</dd>
-                <dt>Desde cuándo</dt>
-                <dd>{p.ficha.desde}</dd>
-                <dt>Qué se intentó</dt>
-                <dd>{p.ficha.intentos}</dd>
-              </dl>
             </article>
           )}
 
@@ -170,23 +168,16 @@ export default function AgentsRoom({ p, webSearch, onOpen }: { p: Project; webSe
             <article className="panel rise">
               <div className="panel-head">
                 <h2>Por qué pasa</h2>
-                <span className="end">Causas · Precedentes</span>
               </div>
               <ol className="rows">
                 {p.investigacion.causas.map((c, i) => (
-                  <li key={i} className="rowcard rise" style={{ ["--i" as string]: i, alignItems: "flex-start" }}>
+                  <li key={i} className="rowcard rise" style={{ ["--i" as string]: i, minHeight: 0 }}>
                     <div className="main">
                       <div className="t" style={{ whiteSpace: "normal" }}>{c.causa}</div>
-                      <div className="sub" style={{ whiteSpace: "normal" }}>{c.evidencia}</div>
                     </div>
                   </li>
                 ))}
               </ol>
-              {p.investigacion.precedentes.length > 0 && (
-                <p className="note-line">
-                  Ya pasó en otro lado, en {p.investigacion.precedentes[0].lugar.toLowerCase()}: {p.investigacion.precedentes[0].que_hicieron.toLowerCase()}. {p.investigacion.precedentes[0].resultado}.
-                </p>
-              )}
             </article>
           )}
 
@@ -194,7 +185,6 @@ export default function AgentsRoom({ p, webSearch, onOpen }: { p: Project; webSe
             <article className="panel rise">
               <div className="panel-head">
                 <h2>Seis salidas</h2>
-                <span className="end">{p.critica ? "Ideas · Abogado del diablo" : "Ideas"}</span>
               </div>
               <table className={`ideas${p.critica ? " decided" : ""}`} key={p.critica ? "decidida" : "abierta"}>
                 <thead>
@@ -220,9 +210,10 @@ export default function AgentsRoom({ p, webSearch, onOpen }: { p: Project; webSe
                           <div className="t">
                             {s.nombre} {win && <span className="pill acc">Elegida</span>}
                           </div>
-                          <div className="sub">{ev ? ev.riesgo : `${ESCALA[s.escala]} · ${s.semanas} sem · ${s.descripcion}`}</div>
                         </td>
-                        <td className="num">${s.costo_usd.toLocaleString("es")}</td>
+                        <td className="num">
+                          <span>${s.costo_usd.toLocaleString("es")}</span>
+                        </td>
                         {ev && (
                           <>
                             <td className="num">
@@ -241,7 +232,6 @@ export default function AgentsRoom({ p, webSearch, onOpen }: { p: Project; webSe
                   })}
                 </tbody>
               </table>
-              {elegida && p.critica && <p className="note-line">{p.critica.por_que}</p>}
             </article>
           )}
 
@@ -249,14 +239,9 @@ export default function AgentsRoom({ p, webSearch, onOpen }: { p: Project; webSe
             <article className="panel rise">
               <div className="panel-head">
                 <h2>El plan</h2>
-                <span className="end">Estrategia</span>
               </div>
               <p className="statement">{p.plan.objetivo}</p>
-              <div className="strip">
-                <div>
-                  <span>Meta</span>
-                  <b>{p.plan.meta_medible}</b>
-                </div>
+              <div className="strip" style={{ gridTemplateColumns: "repeat(3, 1fr)" }}>
                 <div>
                   <span>Duración</span>
                   <b className="num">{p.plan.semanas} semanas</b>
@@ -277,15 +262,13 @@ export default function AgentsRoom({ p, webSearch, onOpen }: { p: Project; webSe
             <article className="panel rise">
               <div className="panel-head">
                 <h2>Listo para arrancar</h2>
-                <span className="end">Oficio · Campaña · Convocatoria</span>
               </div>
               <ul className="rows">
                 {p.docs.map((d) => (
                   <li key={d.id} className="rowcard">
                     <Icon name="doc" />
                     <div className="main">
-                      <div className="t">{d.titulo}</div>
-                      <div className="sub">{d.cuerpo.split("\n").find((l) => l.trim()) ?? ""}</div>
+                      <div className="t">{{ oficio: "Oficio a la autoridad", convocatoria: "Mensaje para vecinos", otro: d.titulo }[d.tipo]}</div>
                     </div>
                   </li>
                 ))}
@@ -293,8 +276,7 @@ export default function AgentsRoom({ p, webSearch, onOpen }: { p: Project; webSe
                   <li className="rowcard">
                     <Icon name="globe" />
                     <div className="main">
-                      <div className="t">Página de firmas publicada</div>
-                      <div className="sub">{p.campana.titular}</div>
+                      <div className="t">Página de firmas</div>
                     </div>
                     <a className="link end" href={`/c/${p.id}`} target="_blank" rel="noreferrer">
                       Abrir

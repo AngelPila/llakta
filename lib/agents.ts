@@ -12,6 +12,15 @@ export const AGENTS: { key: AgentKey; nombre: string; rol: string }[] = [
   { key: "convocatoria", nombre: "Convocatoria", rol: "Escribe el mensaje para sumar vecinos" },
 ];
 
+// El orden en que corre el pipeline; los agentes de una misma fase trabajan a la vez.
+export const FASES: { nombre: string; agentes: AgentKey[] }[] = [
+  { nombre: "Entender", agentes: ["entrevistador"] },
+  { nombre: "Investigar", agentes: ["causas", "precedentes"] },
+  { nombre: "Decidir", agentes: ["ideador", "critico"] },
+  { nombre: "Planear", agentes: ["estratega"] },
+  { nombre: "Redactar", agentes: ["oficio", "campana", "convocatoria"] },
+];
+
 export function freshAgents(): AgentRun[] {
   return AGENTS.map((a) => ({ ...a, estado: "espera", notas: [] }));
 }
