@@ -1,4 +1,5 @@
 import type { AgentKey, AgentRun, Project } from "./types";
+import { elegidaDe, porQueDe } from "./view";
 
 export const AGENTS: { key: AgentKey; nombre: string; rol: string }[] = [
   { key: "entrevistador", nombre: "Entrevista", rol: "Entiende el problema y arma la ficha" },
@@ -42,7 +43,7 @@ export function contexto(p: Project, ...partes: Parte[]): string {
   // La ficha ya resume las respuestas; sin ficha, van tal cual.
   if (resp.length && !(p.ficha && partes.includes("ficha"))) out.push(`Respuestas a la entrevista:\n${resp.join("\n")}`);
   const inv = p.investigacion;
-  const elegida = p.soluciones?.find((s) => s.id === p.critica?.elegida_id);
+  const elegida = elegidaDe(p);
   for (const parte of partes) {
     if (parte === "ficha" && p.ficha) {
       const f = p.ficha;
@@ -58,7 +59,7 @@ export function contexto(p: Project, ...partes: Parte[]): string {
     if (parte === "critica" && p.critica) out.push(`Evaluación crítica: ${JSON.stringify(p.critica)}`);
     if (parte === "elegida" && elegida) {
       const ev = p.critica!.evaluaciones.find((e) => e.id === elegida.id);
-      out.push(`Solución elegida: ${elegida.nombre}. ${elegida.descripcion} (~${elegida.costo_usd} USD, ${elegida.semanas} semanas). Por qué: ${p.critica!.por_que}${ev ? ` Riesgo: ${ev.riesgo} Se opondría: ${ev.quien_se_opone}.` : ""}`);
+      out.push(`Solución elegida: ${elegida.nombre}. ${elegida.descripcion} (~${elegida.costo_usd} USD, ${elegida.semanas} semanas).${porQueDe(p) ? ` Por qué: ${porQueDe(p)}` : " La eligió el grupo."}${ev ? ` Riesgo: ${ev.riesgo} Se opondría: ${ev.quien_se_opone}.` : ""}`);
     }
     if (parte === "plan" && p.plan) {
       const pl = p.plan;

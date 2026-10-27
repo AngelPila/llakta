@@ -45,7 +45,7 @@ export default function Documentos({ p }: { p: Project }) {
             ))}
             {p.campana && (
               <li>
-                <a className="rowcard" href={`/c/${p.id}`} target="_blank" rel="noreferrer">
+                <a className="rowcard" href={`/c/${p.publicoId}`} target="_blank" rel="noreferrer">
                   <Icon name="globe" />
                   <div className="main">
                     <div className="t">Página de firmas</div>

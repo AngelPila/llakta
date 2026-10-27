@@ -53,7 +53,7 @@ export interface Portada {
 export function portada(p: Project): Portada | undefined {
   const propia = p.fotos?.at(-1);
   if (propia)
-    return { src: `/api/projects/${p.id}/fotos/${propia.id}`, w: propia.w, h: propia.h, propia: true, pie: propia.pie || `Foto de ${propia.autor}` };
+    return { src: `/api/projects/${p.publicoId}/fotos/${propia.id}`, w: propia.w, h: propia.h, propia: true, pie: propia.pie || `Foto de ${propia.autor}` };
   const r = referenciaPara(p.problema);
   if (!r) return undefined;
   return { src: r.src, w: r.w, h: r.h, propia: false, pie: r.titulo, credito: r.credito, fuente: r.fuente };

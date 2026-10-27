@@ -4,7 +4,7 @@ import { useRouter } from "next/navigation";
 import { useState } from "react";
 import { Icon } from "./ui";
 
-export default function JoinForm({ token, taken, projectId }: { token: string; taken: string | null; projectId: string }) {
+export default function JoinForm({ token, taken }: { token: string; taken: string | null }) {
   const router = useRouter();
   const [nombre, setNombre] = useState("");
   const [busy, setBusy] = useState(false);
@@ -27,10 +27,11 @@ export default function JoinForm({ token, taken, projectId }: { token: string; t
       setBusy(false);
       return;
     }
+    // El id del tablero solo llega al unirse: antes, la invitación no lo muestra.
     try {
-      localStorage.setItem(`llakta:yo:${projectId}`, nombre.trim());
+      localStorage.setItem(`llakta:yo:${data.projectId}`, nombre.trim());
     } catch {}
-    router.push(`/p/${projectId}#tareas`);
+    router.push(`/p/${data.projectId}#tareas`);
   }
 
   return (

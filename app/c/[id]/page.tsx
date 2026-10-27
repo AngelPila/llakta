@@ -1,5 +1,5 @@
 import { notFound } from "next/navigation";
-import { getProject } from "@/lib/store";
+import { getPublico } from "@/lib/store";
 import SignForm from "@/components/SignForm";
 import { Mark } from "@/components/ui";
 import { portada } from "@/lib/fotos";
@@ -7,7 +7,7 @@ import { portada } from "@/lib/fotos";
 export const dynamic = "force-dynamic";
 
 export default async function Campaign({ params }: { params: Promise<{ id: string }> }) {
-  const p = getProject((await params).id);
+  const p = getPublico((await params).id);
   if (!p?.campana) notFound();
   const c = p.campana;
   const foto = portada(p);
@@ -45,7 +45,7 @@ export default async function Campaign({ params }: { params: Promise<{ id: strin
               <ul>
                 {delBarrio.map((f) => (
                   <li key={f.id}>
-                    <img src={`/api/projects/${p.id}/fotos/${f.id}`} alt={f.pie || `Foto de ${f.autor}`} loading="lazy" />
+                    <img src={`/api/projects/${p.publicoId}/fotos/${f.id}`} alt={f.pie || `Foto de ${f.autor}`} loading="lazy" />
                     <span>{f.pie || `Foto de ${f.autor}`}</span>
                   </li>
                 ))}
@@ -56,7 +56,7 @@ export default async function Campaign({ params }: { params: Promise<{ id: strin
             Firma {p.duenoNombre}, en nombre de la coordinación vecinal.
           </p>
         </div>
-        <SignForm id={p.id} pedido={c.pedido} meta={c.metaFirmas} inicial={c.firmas.length} ultimas={c.firmas.slice(-5).reverse().map((f) => ({ nombre: f.nombre, barrio: f.barrio }))} />
+        <SignForm id={p.publicoId} pedido={c.pedido} meta={c.metaFirmas} inicial={c.firmas.length} ultimas={c.firmas.slice(-5).reverse().map((f) => ({ nombre: f.nombre, barrio: f.barrio }))} />
       </div>
     </main>
   );

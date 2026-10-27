@@ -1,6 +1,7 @@
 "use client";
 
 import type { Project } from "@/lib/types";
+import { elegidaDe, porQueDe } from "@/lib/view";
 import { Score } from "./AgentsRoom";
 
 const ESCALA = { rapida: "Rápida", media: "Media", ambiciosa: "Ambiciosa" } as const;
@@ -105,7 +106,7 @@ export default function Investigacion({ p }: { p: Project }) {
               <tbody>
                 {p.soluciones.map((s) => {
                   const ev = p.critica?.evaluaciones.find((e) => e.id === s.id);
-                  const win = s.id === p.critica?.elegida_id;
+                  const win = s.id === elegidaDe(p)?.id;
                   return (
                     <tr key={s.id} className={win ? "win" : ""}>
                       <td>
@@ -130,7 +131,7 @@ export default function Investigacion({ p }: { p: Project }) {
                 })}
               </tbody>
             </table>
-            {p.critica && <p className="note-line">{p.critica.por_que}</p>}
+            {porQueDe(p) && <p className="note-line">{porQueDe(p)}</p>}
           </section>
         )}
         {inv && inv.fuentes.length > 0 && (

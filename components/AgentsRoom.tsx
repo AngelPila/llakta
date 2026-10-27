@@ -3,7 +3,7 @@
 import { useEffect, useState } from "react";
 import { FASES } from "@/lib/agents";
 import type { AgentRun, AgentState, Project } from "@/lib/types";
-import { duracion } from "@/lib/view";
+import { duracion, elegidaDe } from "@/lib/view";
 import { Icon } from "./ui";
 
 export function AgentGlyph({ estado }: { estado: AgentState }) {
@@ -24,8 +24,8 @@ function faseActual(agentes: AgentRun[]) {
   return i === -1 ? FASES.length : i;
 }
 
-export function Fases({ agentes, children }: { agentes: AgentRun[]; children: (a: AgentRun) => React.ReactNode }) {
-  const actual = faseActual(agentes);
+// `actual` fija la fase en curso cuando el equipo espera a la persona (por ejemplo, para elegir la salida).
+export function Fases({ agentes, actual = faseActual(agentes), children }: { agentes: AgentRun[]; actual?: number; children: (a: AgentRun) => React.ReactNode }) {
   return (
     <ol className="fases">
       {FASES.map((f, i) => {
@@ -82,6 +82,18 @@ export default function AgentsRoom({ p, webSearch, onOpen }: { p: Project; webSe
   const inicio = Math.min(...p.agentes.map((a) => a.inicio ?? Infinity));
   const fin = Math.max(...p.agentes.map((a) => a.fin ?? 0));
   const total = Number.isFinite(inicio) ? (trabajando ? now : fin) - inicio : 0;
+  const eligiendo = p.status === "eligiendo";
+  // Hasta que la persona toque otra, queda marcada la recomendada.
+  const [tocada, setSel] = useState<string>();
+  const sel = tocada ?? p.critica?.elegida_id;
+  const [enviando, setEnviando] = useState(false);
+  const elegida = eligiendo ? sel : elegidaDe(p)?.id;
+
+  async function elegir() {
+    setEnviando(true);
+    const res = await fetch(`/api/projects/${p.id}/eleccion`, { method: "POST", headers: { "content-type": "application/json" }, body: JSON.stringify({ solucionId: sel }) });
+    if (!res.ok) setEnviando(false);
+  }
 
   async function retry() {
     await fetch(`/api/projects/${p.id}/retry`, { method: "POST" });
@@ -106,6 +118,11 @@ export default function AgentsRoom({ p, webSearch, onOpen }: { p: Project; webSe
               Abrir el tablero <Icon name="arrow" />
             </button>
           )}
+          {eligiendo && (
+            <a className="btn primary ready" href="#salidas">
+              Elige la salida <Icon name="arrow" />
+            </a>
+          )}
           {p.status === "error" && (
             <button className="btn primary" onClick={retry}>
               Reintentar
@@ -125,7 +142,7 @@ export default function AgentsRoom({ p, webSearch, onOpen }: { p: Project; webSe
             <div className="panel-head">
               <h2 id="ag-h">El equipo</h2>
             </div>
-            <Fases agentes={p.agentes}>
+            <Fases agentes={p.agentes} actual={eligiendo ? FASES.findIndex((f) => f.agentes.includes("critico")) : undefined}>
               {(a) => (
                   <li key={a.key} className={`rowcard agent ${a.estado}`}>
                     <AgentGlyph estado={a.estado} />
@@ -182,11 +199,12 @@ export default function AgentsRoom({ p, webSearch, onOpen }: { p: Project; webSe
           )}
 
           {p.soluciones && (
-            <article className="panel rise">
+            <article className="panel rise" id="salidas">
               <div className="panel-head">
                 <h2>Seis salidas</h2>
+                {eligiendo && <span className="chip">Elige una</span>}
               </div>
-              <table className={`ideas${p.critica ? " decided" : ""}`} key={p.critica ? "decidida" : "abierta"}>
+              <table className={`ideas${p.critica && !eligiendo ? " decided" : ""}${eligiendo ? " choosing" : ""}`} key={p.critica ? (eligiendo ? "eligiendo" : "decidida") : "abierta"}>
                 <thead>
                   <tr>
                     <th>Solución</th>
@@ -203,13 +221,15 @@ export default function AgentsRoom({ p, webSearch, onOpen }: { p: Project; webSe
                 <tbody>
                   {p.soluciones.map((s, i) => {
                     const ev = p.critica?.evaluaciones.find((e) => e.id === s.id);
-                    const win = s.id === p.critica?.elegida_id;
+                    const win = s.id === elegida;
+                    const recomendada = s.id === p.critica?.elegida_id;
                     return (
-                      <tr key={s.id} className={`rise${win ? " win" : ""}`} style={{ ["--i" as string]: i }}>
+                      <tr key={s.id} className={`rise${win ? " win" : ""}`} style={{ ["--i" as string]: i }} onClick={eligiendo ? () => setSel(s.id) : undefined}>
                         <td>
-                          <div className="t">
-                            {s.nombre} {win && <span className="pill acc">Elegida</span>}
-                          </div>
+                          <label className="t">
+                            {eligiendo && <input type="radio" name="salida" checked={win} onChange={() => setSel(s.id)} />}
+                            <span>{s.nombre}</span> {eligiendo ? recomendada && <span className="pill acc">Recomendada</span> : win && <span className="pill acc">Elegida</span>}
+                          </label>
                         </td>
                         <td className="num">
                           <span>${s.costo_usd.toLocaleString("es")}</span>
@@ -232,6 +252,11 @@ export default function AgentsRoom({ p, webSearch, onOpen }: { p: Project; webSe
                   })}
                 </tbody>
               </table>
+              {eligiendo && (
+                <button className="btn primary" style={{ marginTop: 16 }} disabled={!sel || enviando} onClick={elegir}>
+                  {enviando ? "Enviando…" : "Seguir con esta"} <Icon name="arrow" />
+                </button>
+              )}
             </article>
           )}
 
@@ -278,7 +303,7 @@ export default function AgentsRoom({ p, webSearch, onOpen }: { p: Project; webSe
                     <div className="main">
                       <div className="t">Página de firmas</div>
                     </div>
-                    <a className="link end" href={`/c/${p.id}`} target="_blank" rel="noreferrer">
+                    <a className="link end" href={`/c/${p.publicoId}`} target="_blank" rel="noreferrer">
                       Abrir
                     </a>
                   </li>

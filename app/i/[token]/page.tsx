@@ -49,7 +49,7 @@ export default async function Invite({ params }: { params: Promise<{ token: stri
           </span>
         </div>
       </section>
-      <JoinForm token={token} taken={m.nombre} projectId={p.id} />
+      <JoinForm token={token} taken={m.nombre} />
     </main>
   );
 }

@@ -166,7 +166,7 @@ export interface Evento {
   texto: string;
 }
 
-export type ProjectStatus = "preguntando" | "entrevista" | "trabajando" | "listo" | "error";
+export type ProjectStatus = "preguntando" | "entrevista" | "trabajando" | "eligiendo" | "listo" | "error";
 
 export interface Project {
   id: string;
@@ -190,6 +190,13 @@ export interface Project {
   docs: Doc[];
   campana?: Campana;
   fotos?: Foto[];
+  // La salida que eligió la persona; sin ella, vale la recomendada por el abogado del diablo.
+  elegidaId?: string;
+  // El organizador lo publica en /comunidad; sin eso, solo se llega por su enlace.
+  publico?: boolean;
+  // Lo que va en los enlaces públicos (firmas, comunidad, fotos). El id es la llave del
+  // tablero completo: nunca sale en una página que vea alguien de afuera.
+  publicoId: string;
   chat: ChatMsg[];
   log: Evento[];
 }

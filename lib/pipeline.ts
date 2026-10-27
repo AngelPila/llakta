@@ -66,6 +66,7 @@ function reuse<T>(id: string, keys: AgentKey[], prev: T | undefined): T | undefi
   updateProject(id, (p) => {
     for (const k of keys) {
       const a = p.agentes.find((x) => x.key === k)!;
+      if (a.estado === "listo") continue;
       a.estado = "listo";
       a.notas.push("Reutilizó el resultado anterior");
     }
@@ -116,7 +117,7 @@ export async function runPipeline(id: string) {
   const prev = getProject(id)!;
 
   try {
-    orquestador(id, "Recibí tus respuestas. Empieza la ficha del problema.");
+    if (!prev.ficha) orquestador(id, "Recibí tus respuestas. Empieza la ficha del problema.");
     const ficha = reuse(id, ["entrevistador"], prev.ficha) ?? await step(
       id,
       "entrevistador",
@@ -181,7 +182,7 @@ export async function runPipeline(id: string) {
     });
     } else reuse(id, ["causas", "precedentes"], prev.investigacion);
 
-    orquestador(id, "Con la investigación lista, le paso el caso al equipo de ideas.");
+    if (!prev.soluciones) orquestador(id, "Con la investigación lista, le paso el caso al equipo de ideas.");
     const ideas = reuse(id, ["ideador"], prev.soluciones && { soluciones: prev.soluciones }) ?? await step(
       id,
       "ideador",
@@ -212,11 +213,20 @@ export async function runPipeline(id: string) {
               system: sys("Eres el abogado del diablo. Atacas cada solución con honestidad: por qué fallaría, quién se opondría, y la puntúas de 1 a 5 en impacto, costo (5 = barato) y factibilidad para un grupo sin experiencia. Luego eliges la que mejor resiste. Usa los ids s1…s6 tal cual."),
               prompt: ctx("ficha", "causas", "soluciones"),
             }),
-      (p, o) => `Eligió: ${p.soluciones?.find((s) => s.id === o.elegida_id)?.nombre ?? o.elegida_id}`,
+      (p, o) => `Recomienda: ${p.soluciones?.find((s) => s.id === o.elegida_id)?.nombre ?? o.elegida_id}`,
     );
     updateProject(id, (p) => {
       p.critica = critica;
     });
+
+    // La persona elige la salida antes del plan; la elección vuelve a llamar a runPipeline.
+    if (!getProject(id)!.elegidaId) {
+      updateProject(id, (p) => {
+        p.status = "eligiendo";
+      });
+      orquestador(id, "Hay una salida recomendada. Falta que elijas con cuál seguir.");
+      return;
+    }
 
     orquestador(id, "Hay solución elegida. La estrategia arma el plan.");
     const plan = reuse(id, ["estratega"], prev.plan) ?? await step(

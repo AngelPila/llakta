@@ -8,7 +8,7 @@ import { fotoRef, portada } from "@/lib/fotos";
 
 export const dynamic = "force-dynamic";
 
-const ESTADO: Record<string, string> = { preguntando: "Preparando preguntas", entrevista: "Esperando respuestas", trabajando: "Agentes trabajando", listo: "En marcha", error: "Se detuvo" };
+const ESTADO: Record<string, string> = { preguntando: "Preparando preguntas", entrevista: "Esperando respuestas", trabajando: "Agentes trabajando", eligiendo: "Esperando tu elección", listo: "En marcha", error: "Se detuvo" };
 
 export default function Home() {
   // Publicada (LLAKTA_DESTACADOS con ids separados por coma), el inicio muestra solo esos:
@@ -27,6 +27,9 @@ export default function Home() {
         <nav className="nav">
           <Link href="/" aria-current="page">
             <Icon name="plus" /> Nuevo problema
+          </Link>
+          <Link href="/comunidad">
+            <Icon name="globe" /> Comunidad
           </Link>
           {projects.slice(0, 8).map((p) => (
             <Link key={p.id} href={`/p/${p.id}`}>

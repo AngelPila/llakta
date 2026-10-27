@@ -50,3 +50,11 @@ export function recien(t: { cambio?: number }, ms = 4000): boolean {
 export function plural(n: number, uno: string, varios: string): string {
   return `${n} ${n === 1 ? uno : varios}`;
 }
+
+export const rolesAbiertos = (p: Project) => p.members.filter((m) => !m.nombre);
+
+// La salida con la que sigue el proyecto: la que eligió la persona o, si no eligió, la recomendada.
+export const elegidaDe = (p: Project) => p.soluciones?.find((s) => s.id === (p.elegidaId ?? p.critica?.elegida_id));
+
+// El porqué del abogado del diablo solo vale si la persona se quedó con su recomendación.
+export const porQueDe = (p: Project) => (!p.elegidaId || p.elegidaId === p.critica?.elegida_id ? p.critica?.por_que : undefined);

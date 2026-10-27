@@ -17,6 +17,7 @@ export async function POST(req: Request) {
   const id = newId(8);
   saveProject({
     id,
+    publicoId: newId(12),
     creadoEn: Date.now(),
     duenoNombre: nombre,
     problema,

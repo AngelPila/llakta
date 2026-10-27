@@ -707,3 +707,21 @@ table.ideas tr.win .pill { animation: pop var(--t-std) var(--ease-settle) 620ms 
 .fase.ahora .fase-st { color: var(--accent); font-weight: 600; }
 .fase.despues .fase-head b { color: var(--muted); }
 .fase-agentes { font-size: 12px; line-height: 18px; color: var(--muted); }
+
+/* Comunidad: los proyectos publicados, para quien no organiza. */
+.comunidad { padding: 8px 32px 80px; }
+.cards { list-style: none; margin: 32px 0 0; padding: 0; }
+.card { display: flex; flex-direction: column; height: 100%; background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius-card); overflow: hidden; transition: border-color var(--t-quick) var(--ease), transform var(--t-quick) var(--ease); }
+.card:hover { border-color: var(--control); transform: translateY(-2px); }
+.card .frame { aspect-ratio: 3 / 2; background: var(--raised); }
+.card .frame img { width: 100%; height: 100%; object-fit: cover; display: block; }
+.card-body { display: flex; flex-direction: column; gap: 4px; padding: 14px 16px 16px; font-size: 13px; }
+.card-body b { font-size: 15px; font-weight: 600; line-height: 21px; }
+.card-meta { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 8px; }
+@media (max-width: 900px) { .cards > .s4 { grid-column: span 6; } }
+@media (max-width: 600px) { .comunidad { padding: 8px 16px 64px; } .cards > .s4 { grid-column: 1 / -1; } }
+table.ideas.choosing tbody tr { cursor: pointer; }
+table.ideas.choosing tbody tr:hover td { background: var(--rule); }
+table.ideas.choosing input[type="radio"] { accent-color: var(--accent); margin: 0; flex: none; transform: translateY(1px); }
+table.ideas.choosing .t { flex-wrap: nowrap; align-items: baseline; cursor: pointer; }
+table.ideas.choosing .t span:first-of-type { min-width: 0; }

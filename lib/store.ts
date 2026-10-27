@@ -27,6 +27,8 @@ function db(): Db {
   if (!state.db) {
     try {
       state.db = JSON.parse(fs.readFileSync(FILE, "utf8")) as Db;
+      // Proyectos de antes de la clave pública: se la ponemos al cargar.
+      for (const p of Object.values(state.db.projects)) p.publicoId ??= newId(12);
     } catch {
       state.db = { projects: {} };
     }
@@ -60,6 +62,11 @@ export function listProjects(): Project[] {
 
 export function getProject(id: string): Project | undefined {
   return db().projects[id];
+}
+
+// Para las páginas públicas: por clave pública o, en enlaces viejos de firmas, por id.
+export function getPublico(key: string): Project | undefined {
+  return Object.values(db().projects).find((p) => p.publicoId === key) ?? getProject(key);
 }
 
 export function findByToken(token: string): { project: Project; memberId: string } | undefined {

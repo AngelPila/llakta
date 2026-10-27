@@ -111,6 +111,7 @@ export default function ProjectApp({ initial, webSearch }: { initial: Project; w
   }).length;
   const counts: Partial<Record<View, string>> = { tareas: sinPersona ? `${sinPersona} sin persona` : undefined, equipo: abiertos ? `${abiertos} por sumar` : undefined };
   const [copiado, setCopiado] = useState(false);
+  const publicar = (publico: boolean) => fetch(`/api/projects/${p.id}`, { method: "PATCH", headers: { "content-type": "application/json" }, body: JSON.stringify({ publico }) });
 
   let body: React.ReactNode;
   if (p.status === "preguntando" || p.status === "entrevista") body = <Interview p={p} />;
@@ -159,14 +160,14 @@ export default function ProjectApp({ initial, webSearch }: { initial: Project; w
         </nav>
         {p.campana && (
           <div className="camp-card">
-            <a href={`/c/${p.id}`} target="_blank" rel="noreferrer">
+            <a href={`/c/${p.publicoId}`} target="_blank" rel="noreferrer">
               Página de firmas
             </a>
             <p>Compártela en los grupos del barrio.</p>
             <button
               className="link"
               onClick={() => {
-                navigator.clipboard?.writeText(`${window.location.origin}/c/${p.id}`).then(() => {
+                navigator.clipboard?.writeText(`${window.location.origin}/c/${p.publicoId}`).then(() => {
                   setCopiado(true);
                   setTimeout(() => setCopiado(false), 1800);
                 });
@@ -174,6 +175,20 @@ export default function ProjectApp({ initial, webSearch }: { initial: Project; w
             >
               <Icon name={copiado ? "check" : "link"} size={14} /> {copiado ? "Enlace copiado" : "Copiar enlace"}
             </button>
+            {listo && yo === p.duenoNombre &&
+              (p.publico ? (
+                <span className="link">
+                  <Icon name="check" size={14} />
+                  <a href={`/comunidad/${p.publicoId}`} target="_blank" rel="noreferrer" style={{ fontSize: 12 }}>
+                    En Comunidad
+                  </a>
+                  · <button className="link" style={{ marginTop: 0, fontWeight: 400 }} onClick={() => publicar(false)}>quitar</button>
+                </span>
+              ) : (
+                <button className="link" onClick={() => publicar(true)}>
+                  <Icon name="globe" size={14} /> Publicar en Comunidad
+                </button>
+              ))}
           </div>
         )}
         <div className="sidebar-foot">

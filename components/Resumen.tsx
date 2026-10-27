@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from "react";
 import type { Project } from "@/lib/types";
-import { avanceSemana, fecha, inicioSemana, memberById, nombreDe, plural, proximaTarea, recien, semanaActual } from "@/lib/view";
+import { avanceSemana, elegidaDe, fecha, inicioSemana, memberById, nombreDe, plural, porQueDe, proximaTarea, recien, semanaActual } from "@/lib/view";
 import { Score } from "./AgentsRoom";
 import type { View } from "./ProjectApp";
 import { Avatar, Icon } from "./ui";
@@ -147,7 +147,7 @@ export default function Resumen({ p, go, yo }: { p: Project; go: (v: View) => vo
   };
   const huerfanas = estaSemana.filter(sinQuien).length;
   const hitoFirmas = p.plan?.hitos.find((h) => /oficio|entreg/i.test(h.hito));
-  const elegida = p.soluciones?.find((s) => s.id === p.critica?.elegida_id);
+  const elegida = elegidaDe(p);
   const ev = p.critica?.evaluaciones.find((e) => e.id === elegida?.id);
 
   // El hallazgo de la semana: lo que más necesita atención, dicho bajo el título.
@@ -246,7 +246,7 @@ export default function Resumen({ p, go, yo }: { p: Project; go: (v: View) => vo
               ) : (
                 <span>Todavía nadie firmó</span>
               )}
-              <a href={`/c/${p.id}`} target="_blank" rel="noreferrer">
+              <a href={`/c/${p.publicoId}`} target="_blank" rel="noreferrer">
                 Abrir página
               </a>
             </div>
@@ -281,9 +281,11 @@ export default function Resumen({ p, go, yo }: { p: Project; go: (v: View) => vo
               </span>
             </div>
             <p className="statement">{elegida.nombre}</p>
-            <p className="note-line" style={{ marginTop: 6 }}>
-              {p.critica?.por_que}
-            </p>
+            {porQueDe(p) && (
+              <p className="note-line" style={{ marginTop: 6 }}>
+                {porQueDe(p)}
+              </p>
+            )}
             {ev && (
               <div className="scores">
                 <span>
